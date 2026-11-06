@@ -44,9 +44,9 @@ jobs:
         id: build
         run: |
           set +e
-          gradle assembleDebug assembleRelease --no-daemon --console=plain 2>&1 | tee build.log
+          gradle testDebugUnitTest assembleDebug assembleRelease --no-daemon --console=plain 2>&1 | tee build.log
           code=${PIPESTATUS[0]}
-          grep -E '^(e: |ERROR|\* What went wrong|FAILURE|BUILD )|Missing class' -A3 build.log > errors.txt || true
+          grep -E '^(e: |ERROR|\* What went wrong|FAILURE|BUILD )|Missing class|FAILED|Exception|expected' -A3 build.log > errors.txt || true
           # R8 writes suggested rules here when classes are missing in the release build.
           cat app/build/outputs/mapping/release/missing_rules.txt >> errors.txt 2>/dev/null || true
           echo "code=$code" >> "$GITHUB_OUTPUT"

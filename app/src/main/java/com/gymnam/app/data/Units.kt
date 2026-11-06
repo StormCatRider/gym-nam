@@ -68,20 +68,16 @@ object Units {
     /**
      * Readable water amount:
      *  imperial: "40 fl oz"
-     *  metric under 1 liter: "750 ml";  1 liter or more: "1.9 L" (1 L = 1,000 ml, one decimal,
-     *  two decimals only for quarter liters like "1.25 L").
+     *  metric under 1 liter: "750 ml"
+     *  metric 1 liter or more: rounded to the nearest 50 ml and shown in liters:
+     *  1,893 ml -> "1.9 L", 1,250 ml -> "1.25 L", 2,000 ml -> "2 L".
      */
     fun water(flOz: Double, metric: Boolean): String {
         if (!metric) return "${NumberFormat.getIntegerInstance().format(flOz.roundToInt())} fl oz"
         val ml = waterValue(flOz, metric)
-        return if (ml < 1000) "$ml ml" else "${fmtNum(liters(ml))} L"
-    }
-
-    /** ml -> liters for display: 1,250 -> 1.25, 1,893 -> 1.9. */
-    private fun liters(ml: Int): Double {
-        val l = ml / 1000.0
-        val quarter = Math.round(l * 4) / 4.0
-        return if (kotlin.math.abs(l - quarter) < 0.005) quarter else Math.round(l * 10) / 10.0
+        if (ml < 1000) return "$ml ml"
+        val liters = java.math.BigDecimal((ml / 50.0).roundToInt() * 50).movePointLeft(3).stripTrailingZeros().toPlainString()
+        return "$liters L"
     }
 
     /** Typed water -> fl oz to store. `liters` = the user picked "L" instead of "ml". */

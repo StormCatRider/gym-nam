@@ -101,4 +101,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
+
+    // Automatic checks of the math and matching (app/src/test). Run on GitHub with each push.
+    testImplementation("junit:junit:4.13.2")
 }
