@@ -71,7 +71,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -295,8 +297,10 @@ fun MainScaffold() {
             // "Edit my goals" from Settings: the setup screens without the tour.
             composable(Routes.SETUP) {
                 val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as com.gymnam.app.GymNamApp
-                val vm: com.gymnam.app.ui.setup.SetupViewModel = viewModel(factory = androidx.lifecycle.viewmodel.viewModelFactory {
-                    androidx.lifecycle.viewmodel.initializer {
+                val vm: com.gymnam.app.ui.setup.SetupViewModel = viewModel(factory = viewModelFactory {
+                    // initializer is an "extension" function: it must be imported (see top
+                    // of file) and called by its short name, not by its full package path.
+                    initializer {
                         com.gymnam.app.ui.setup.SetupViewModel(app.settings, app.db.trackingDao(), withTour = false)
                     }
                 })
