@@ -29,6 +29,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -156,48 +157,52 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
         }
     }
 
-    Column(
-        Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-            .padding(start = 16.dp, end = 16.dp,
-                top = contentPadding.calculateTopPadding() + 8.dp,
-                bottom = contentPadding.calculateBottomPadding() + 24.dp),
+    // LazyColumn (instead of a long scrolling Column) only builds the cards that are on
+    // screen, so Settings opens and scrolls more smoothly.
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp,
+            top = contentPadding.calculateTopPadding() + 8.dp,
+            bottom = contentPadding.calculateBottomPadding() + 24.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         // (The page title now lives in the colored top bar.)
         // Theme: Light / Dark / follow the phone, then the color palette.
-        SoftCard {
-            Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.titleMedium)
-            // Saved right away; the whole app switches instantly.
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                val modes = listOf("system" to R.string.theme_system, "light" to R.string.theme_light, "dark" to R.string.theme_dark)
-                modes.forEachIndexed { i, (id, label) ->
-                    SegmentedButton(
-                        selected = (s?.themeMode ?: "system") == id,
-                        onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); vm.setThemeMode(id) },
-                        shape = SegmentedButtonDefaults.itemShape(i, modes.size)
-                    ) { Text(stringResource(label), maxLines = 1) }
+        item {
+            SoftCard {
+                Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.titleMedium)
+                // Saved right away; the whole app switches instantly.
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                    val modes = listOf("system" to R.string.theme_system, "light" to R.string.theme_light, "dark" to R.string.theme_dark)
+                    modes.forEachIndexed { i, (id, label) ->
+                        SegmentedButton(
+                            selected = (s?.themeMode ?: "system") == id,
+                            onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); vm.setThemeMode(id) },
+                            shape = SegmentedButtonDefaults.itemShape(i, modes.size)
+                        ) { Text(stringResource(label), maxLines = 1) }
+                    }
                 }
-            }
-            Spacer(Modifier.height(14.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Palettes.forEach { pal ->
-                    val selected = s?.paletteId == pal.id
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Surface(
-                            modifier = Modifier.size(48.dp).clip(CircleShape).clickable {
-                                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.setPalette(pal.id)
-                            },
-                            shape = CircleShape,
-                            color = if (dark) pal.accentDark else pal.accentLight,
-                            border = if (selected) BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface) else null
-                        ) {
-                            if (selected) Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Filled.Check, null, tint = androidx.compose.ui.graphics.Color(0xFF1F1F24))
+                Spacer(Modifier.height(14.dp))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Palettes.forEach { pal ->
+                        val selected = s?.paletteId == pal.id
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Surface(
+                                modifier = Modifier.size(48.dp).clip(CircleShape).clickable {
+                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    vm.setPalette(pal.id)
+                                },
+                                shape = CircleShape,
+                                color = if (dark) pal.accentDark else pal.accentLight,
+                                border = if (selected) BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface) else null
+                            ) {
+                                if (selected) Box(contentAlignment = Alignment.Center) {
+                                    Icon(Icons.Filled.Check, null, tint = androidx.compose.ui.graphics.Color(0xFF1F1F24))
+                                }
                             }
+                            Spacer(Modifier.height(6.dp))
+                            Text(stringResource(pal.nameRes), style = MaterialTheme.typography.labelSmall)
                         }
-                        Spacer(Modifier.height(6.dp))
-                        Text(stringResource(pal.nameRes), style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
@@ -205,267 +210,295 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
 
         // Units: Imperial (lb, ft/in, fl oz) or Metric (kg, cm, ml/L). Only changes how numbers are
         // shown and typed; everything is stored the same way, so switching is always safe.
-        SoftCard {
-            Text("📏  " + stringResource(R.string.units_title), style = MaterialTheme.typography.titleMedium)
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                SegmentedButton(!metric, { vm.setMetric(false) }, SegmentedButtonDefaults.itemShape(0, 2)) {
-                    Text(stringResource(R.string.units_imperial), maxLines = 1)
+        item {
+            SoftCard {
+                Text("📏  " + stringResource(R.string.units_title), style = MaterialTheme.typography.titleMedium)
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                    SegmentedButton(!metric, { vm.setMetric(false) }, SegmentedButtonDefaults.itemShape(0, 2)) {
+                        Text(stringResource(R.string.units_imperial), maxLines = 1)
+                    }
+                    SegmentedButton(metric, { vm.setMetric(true) }, SegmentedButtonDefaults.itemShape(1, 2)) {
+                        Text(stringResource(R.string.units_metric), maxLines = 1)
+                    }
                 }
-                SegmentedButton(metric, { vm.setMetric(true) }, SegmentedButtonDefaults.itemShape(1, 2)) {
-                    Text(stringResource(R.string.units_metric), maxLines = 1)
-                }
+                Text(stringResource(if (metric) R.string.units_metric_d else R.string.units_imperial_d) + " · " + stringResource(R.string.units_note),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp))
             }
-            Text(stringResource(if (metric) R.string.units_metric_d else R.string.units_imperial_d) + " · " + stringResource(R.string.units_note),
-                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp))
         }
 
         // Goals from the setup wizard
-        SoftCard {
-            Text("🎯  " + stringResource(R.string.goals_title), style = MaterialTheme.typography.titleMedium)
-            s?.profile?.let { pr ->
-                Text(stringResource(R.string.goals_summary, Units.weight(pr.weightLb, metric),
-                    stringResource(when (pr.goal) {
-                        com.gymnam.app.data.GoalType.LOSE -> R.string.goal_lose
-                        com.gymnam.app.data.GoalType.MAINTAIN -> R.string.goal_maintain
-                        com.gymnam.app.data.GoalType.GAIN -> R.string.goal_gain
-                    }), if (pr.formula == com.gymnam.app.data.Formula.KATCH) "Katch-McArdle" else "Mifflin-St Jeor"),
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            FilledTonalButton(onClick = onOpenSetup, shape = CircleShape, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                Text(stringResource(R.string.recalculate_goals))
+        item {
+            SoftCard {
+                Text("🎯  " + stringResource(R.string.goals_title), style = MaterialTheme.typography.titleMedium)
+                s?.profile?.let { pr ->
+                    Text(stringResource(R.string.goals_summary, Units.weight(pr.weightLb, metric),
+                        stringResource(when (pr.goal) {
+                            com.gymnam.app.data.GoalType.LOSE -> R.string.goal_lose
+                            com.gymnam.app.data.GoalType.MAINTAIN -> R.string.goal_maintain
+                            com.gymnam.app.data.GoalType.GAIN -> R.string.goal_gain
+                        }), if (pr.formula == com.gymnam.app.data.Formula.KATCH) "Katch-McArdle" else "Mifflin-St Jeor"),
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                FilledTonalButton(onClick = onOpenSetup, shape = CircleShape, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                    Text(stringResource(R.string.recalculate_goals))
+                }
             }
         }
 
         // Targets (manual fine-tuning)
-        SoftCard {
-            Text(stringResource(R.string.settings_targets), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.settings_targets_hint), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(Modifier.height(12.dp))
-            val num = KeyboardOptions(keyboardType = KeyboardType.Number)
-            OutlinedTextField(cal, { cal = it.filter(Char::isDigit) }, Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.calories)) }, singleLine = true,
-                keyboardOptions = num, shape = MaterialTheme.shapes.medium)
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(p, { p = it.filter(Char::isDigit) }, Modifier.weight(1f),
-                    label = { Text(stringResource(R.string.protein_g), maxLines = 1) }, singleLine = true,
+        item {
+            SoftCard {
+                Text(stringResource(R.string.settings_targets), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.settings_targets_hint), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(12.dp))
+                val num = KeyboardOptions(keyboardType = KeyboardType.Number)
+                OutlinedTextField(cal, { cal = it.filter(Char::isDigit) }, Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.calories)) }, singleLine = true,
                     keyboardOptions = num, shape = MaterialTheme.shapes.medium)
-                OutlinedTextField(c, { c = it.filter(Char::isDigit) }, Modifier.weight(1f),
-                    label = { Text(stringResource(R.string.carbs_g), maxLines = 1) }, singleLine = true,
-                    keyboardOptions = num, shape = MaterialTheme.shapes.medium)
-                OutlinedTextField(f, { f = it.filter(Char::isDigit) }, Modifier.weight(1f),
-                    label = { Text(stringResource(R.string.fat_g), maxLines = 1) }, singleLine = true,
-                    keyboardOptions = num, shape = MaterialTheme.shapes.medium)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(p, { p = it.filter(Char::isDigit) }, Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.protein_g), maxLines = 1) }, singleLine = true,
+                        keyboardOptions = num, shape = MaterialTheme.shapes.medium)
+                    OutlinedTextField(c, { c = it.filter(Char::isDigit) }, Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.carbs_g), maxLines = 1) }, singleLine = true,
+                        keyboardOptions = num, shape = MaterialTheme.shapes.medium)
+                    OutlinedTextField(f, { f = it.filter(Char::isDigit) }, Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.fat_g), maxLines = 1) }, singleLine = true,
+                        keyboardOptions = num, shape = MaterialTheme.shapes.medium)
+                }
+                Spacer(Modifier.height(12.dp))
+                FilledTonalButton(
+                    onClick = {
+                        val d = Targets()
+                        vm.setTargets(Targets(
+                            calories = cal.toIntOrNull()?.takeIf { it > 0 } ?: d.calories,
+                            proteinG = p.toIntOrNull() ?: d.proteinG,
+                            carbsG = c.toIntOrNull() ?: d.carbsG,
+                            fatG = f.toIntOrNull() ?: d.fatG
+                        ))
+                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                        scope.launch { snackbar.showSnackbar(savedMsg) }
+                    },
+                    shape = CircleShape, modifier = Modifier.fillMaxWidth()
+                ) { Text(stringResource(R.string.save)) }
             }
-            Spacer(Modifier.height(12.dp))
-            FilledTonalButton(
-                onClick = {
-                    val d = Targets()
-                    vm.setTargets(Targets(
-                        calories = cal.toIntOrNull()?.takeIf { it > 0 } ?: d.calories,
-                        proteinG = p.toIntOrNull() ?: d.proteinG,
-                        carbsG = c.toIntOrNull() ?: d.carbsG,
-                        fatG = f.toIntOrNull() ?: d.fatG
-                    ))
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    scope.launch { snackbar.showSnackbar(savedMsg) }
-                },
-                shape = CircleShape, modifier = Modifier.fillMaxWidth()
-            ) { Text(stringResource(R.string.save)) }
         }
 
         // The app follows the phone's language. On Android 13+ the button opens Android's
         // own per-app language screen, so you can pick English or Spanish just for this app.
         // Language
-        SoftCard {
-            Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.settings_language_hint), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Spacer(Modifier.height(10.dp))
-                OutlinedButton(
-                    onClick = {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.parse("package:${context.packageName}"))
-                        )
-                    },
-                    shape = CircleShape, modifier = Modifier.fillMaxWidth()
-                ) { Text(stringResource(R.string.open_language_settings)) }
+        item {
+            SoftCard {
+                Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.settings_language_hint), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Spacer(Modifier.height(10.dp))
+                    OutlinedButton(
+                        onClick = {
+                            context.startActivity(
+                                Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.parse("package:${context.packageName}"))
+                            )
+                        },
+                        shape = CircleShape, modifier = Modifier.fillMaxWidth()
+                    ) { Text(stringResource(R.string.open_language_settings)) }
+                }
             }
         }
 
         // Water goal
-        SoftCard {
-            Text("💧  " + stringResource(R.string.water_goal), style = MaterialTheme.typography.titleMedium)
-            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(water, { water = it }, Modifier.weight(1f), singleLine = true,
-                    suffix = { Text(if (metric) "L" else "fl oz") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    shape = MaterialTheme.shapes.medium)
-                FilledTonalButton(onClick = {
-                    // Saved as whole fl oz; allowed range 8-256 fl oz (about 0.25-7.5 L).
-                    water.toNumberOrNull()?.let { Units.waterGoalFlOz(it, metric) }?.takeIf { it in 8..256 }?.let {
-                        vm.setWaterGoal(it); scope.launch { snackbar.showSnackbar(savedMsg) }
-                    }
-                }, shape = CircleShape, modifier = Modifier.padding(start = 8.dp)) { Text(stringResource(R.string.save)) }
+        item {
+            SoftCard {
+                Text("💧  " + stringResource(R.string.water_goal), style = MaterialTheme.typography.titleMedium)
+                Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(water, { water = it }, Modifier.weight(1f), singleLine = true,
+                        suffix = { Text(if (metric) "L" else "fl oz") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = MaterialTheme.shapes.medium)
+                    FilledTonalButton(onClick = {
+                        // Saved as whole fl oz; allowed range 8-256 fl oz (about 0.25-7.5 L).
+                        water.toNumberOrNull()?.let { Units.waterGoalFlOz(it, metric) }?.takeIf { it in 8..256 }?.let {
+                            vm.setWaterGoal(it); scope.launch { snackbar.showSnackbar(savedMsg) }
+                        }
+                    }, shape = CircleShape, modifier = Modifier.padding(start = 8.dp)) { Text(stringResource(R.string.save)) }
+                }
+                Text(stringResource(if (metric) R.string.water_goal_hint_metric else R.string.water_goal_hint), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
             }
-            Text(stringResource(if (metric) R.string.water_goal_hint_metric else R.string.water_goal_hint), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
         }
 
         // Widget
-        SoftCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("📱  " + stringResource(R.string.widget_title), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.widget_show_weight), style = MaterialTheme.typography.bodyMedium)
+        item {
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("📱  " + stringResource(R.string.widget_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.widget_show_weight), style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Switch(checked = s?.widgetShowWeight == true, onCheckedChange = vm::setWidgetShowWeight)
                 }
-                Switch(checked = s?.widgetShowWeight == true, onCheckedChange = vm::setWidgetShowWeight)
+                Text(stringResource(R.string.widget_hint), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
             }
-            Text(stringResource(R.string.widget_hint), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
         }
 
         // Backup
-        SoftCard {
-            Text("🗂️  " + stringResource(R.string.backup_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.backup_body), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
-            Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilledTonalButton(onClick = { exportLauncher.launch("GymNam-backup-${java.time.LocalDate.now()}.zip") },
-                    enabled = !working, shape = CircleShape, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.export)) }
-                OutlinedButton(onClick = { importLauncher.launch(arrayOf("application/zip", "application/octet-stream")) },
-                    enabled = !working, shape = CircleShape, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.restore)) }
-            }
-            Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.auto_backup), style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        s?.lastBackupMillis?.takeIf { it > 0 }?.let {
-                            stringResource(R.string.last_backup, java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault())
-                                .toLocalDate().format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)))
-                        } ?: stringResource(R.string.auto_backup_hint),
-                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+        item {
+            SoftCard {
+                Text("🗂️  " + stringResource(R.string.backup_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.backup_body), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+                Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilledTonalButton(onClick = { exportLauncher.launch("GymNam-backup-${java.time.LocalDate.now()}.zip") },
+                        enabled = !working, shape = CircleShape, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.export)) }
+                    OutlinedButton(onClick = { importLauncher.launch(arrayOf("application/zip", "application/octet-stream")) },
+                        enabled = !working, shape = CircleShape, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.restore)) }
                 }
-                Switch(checked = s?.autoBackup == true, onCheckedChange = vm::setAutoBackup)
+                Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.auto_backup), style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            s?.lastBackupMillis?.takeIf { it > 0 }?.let {
+                                stringResource(R.string.last_backup, java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault())
+                                    .toLocalDate().format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)))
+                            } ?: stringResource(R.string.auto_backup_hint),
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(checked = s?.autoBackup == true, onCheckedChange = vm::setAutoBackup)
+                }
+                TextButton(onClick = vm::backupNow, enabled = !working) { Text(stringResource(R.string.backup_now)) }
             }
-            TextButton(onClick = vm::backupNow, enabled = !working) { Text(stringResource(R.string.backup_now)) }
         }
 
         // Can only be turned on if your phone has a screen lock (PIN, pattern, password
         // or fingerprint); otherwise there would be nothing to unlock with.
         // App lock
-        SoftCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("🔒  " + stringResource(R.string.lock_title), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.lock_body), style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+        item {
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("🔒  " + stringResource(R.string.lock_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.lock_body), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = s?.lockEnabled == true, onCheckedChange = { on ->
+                        if (on && (activity == null || !com.gymnam.app.MainActivity.canLock(activity))) {
+                            scope.launch { snackbar.showSnackbar(noLockMsg) }
+                        } else vm.setLock(on)
+                    })
                 }
-                Switch(checked = s?.lockEnabled == true, onCheckedChange = { on ->
-                    if (on && (activity == null || !com.gymnam.app.MainActivity.canLock(activity))) {
-                        scope.launch { snackbar.showSnackbar(noLockMsg) }
-                    } else vm.setLock(on)
-                })
             }
         }
 
         // Reminders
-        SoftCard {
-            Text("🔔  " + stringResource(R.string.reminders_title), style = MaterialTheme.typography.titleMedium)
-            Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.log_reminder), style = MaterialTheme.typography.bodyLarge)
-                    Text(stringResource(R.string.log_reminder_hint), style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+        item {
+            SoftCard {
+                Text("🔔  " + stringResource(R.string.reminders_title), style = MaterialTheme.typography.titleMedium)
+                Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.log_reminder), style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource(R.string.log_reminder_hint), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = s?.logReminder == true, onCheckedChange = { if (it) enableReminder("log") else vm.setLogReminder(false) })
                 }
-                Switch(checked = s?.logReminder == true, onCheckedChange = { if (it) enableReminder("log") else vm.setLogReminder(false) })
-            }
-            if (s?.logReminder == true) Row(
-                Modifier.padding(top = 6.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                (18..22).forEach { h ->
-                    FilterChip(s?.logReminderHour == h, { vm.setLogReminderHour(h) }, shape = CircleShape,
-                        label = { Text(java.time.LocalTime.of(h, 0).format(java.time.format.DateTimeFormatter.ofLocalizedTime(java.time.format.FormatStyle.SHORT))) })
+                if (s?.logReminder == true) Row(
+                    Modifier.padding(top = 6.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    (18..22).forEach { h ->
+                        FilterChip(s?.logReminderHour == h, { vm.setLogReminderHour(h) }, shape = CircleShape,
+                            label = { Text(java.time.LocalTime.of(h, 0).format(java.time.format.DateTimeFormatter.ofLocalizedTime(java.time.format.FormatStyle.SHORT))) })
+                    }
                 }
-            }
-            Row(Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.weekly_summary), style = MaterialTheme.typography.bodyLarge)
-                    Text(stringResource(R.string.weekly_summary_hint), style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Row(Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.weekly_summary), style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource(R.string.weekly_summary_hint), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = s?.weeklySummary == true, onCheckedChange = { if (it) enableReminder("weekly") else vm.setWeeklySummary(false) })
                 }
-                Switch(checked = s?.weeklySummary == true, onCheckedChange = { if (it) enableReminder("weekly") else vm.setWeeklySummary(false) })
             }
         }
 
         // If Health Connect isn't available on the phone, a message says so and nothing
         // is turned on. "Manage Health Connect permissions" opens its own settings.
         // Health Connect (optional, off by default)
-        SoftCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("⌚  Health Connect", style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.hc_body), style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Switch(checked = s?.healthConnect == true, onCheckedChange = { on ->
-                    when {
-                        !on -> vm.setHealthConnect(false)
-                        !com.gymnam.app.data.HealthSync.available(context) -> scope.launch { snackbar.showSnackbar(noHcMsg) }
-                        else -> hcLauncher.launch(com.gymnam.app.data.HealthSync.PERMISSIONS)
+        item {
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("⌚  Health Connect", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.hc_body), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                })
+                    Switch(checked = s?.healthConnect == true, onCheckedChange = { on ->
+                        when {
+                            !on -> vm.setHealthConnect(false)
+                            !com.gymnam.app.data.HealthSync.available(context) -> scope.launch { snackbar.showSnackbar(noHcMsg) }
+                            else -> hcLauncher.launch(com.gymnam.app.data.HealthSync.PERMISSIONS)
+                        }
+                    })
+                }
+                if (s?.healthConnect == true) TextButton(onClick = {
+                    runCatching { context.startActivity(Intent(androidx.health.connect.client.HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)) }
+                }) { Text(stringResource(R.string.hc_manage)) }
+                Text(stringResource(R.string.hc_double_note), style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            if (s?.healthConnect == true) TextButton(onClick = {
-                runCatching { context.startActivity(Intent(androidx.health.connect.client.HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)) }
-            }) { Text(stringResource(R.string.hc_manage)) }
-            Text(stringResource(R.string.hc_double_note), style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
         // Online search switch (off by default)
-        SoftCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.settings_online_title), style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f))
-                Switch(
-                    checked = s?.internetEnabled == true,
-                    onCheckedChange = {
-                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        vm.setInternet(it)
-                    }
-                )
+        item {
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.settings_online_title), style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = s?.internetEnabled == true,
+                        onCheckedChange = {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            vm.setInternet(it)
+                        }
+                    )
+                }
+                Text(stringResource(R.string.settings_online_body), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text(stringResource(R.string.settings_online_body), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
         // Privacy
-        SoftCard {
-            Text(stringResource(R.string.privacy_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.privacy_stage1), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+        item {
+            SoftCard {
+                Text(stringResource(R.string.privacy_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.privacy_stage1), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
 
         // Credits for the data sources and open-source libraries. The Open Food Facts
         // credit is REQUIRED by its license (ODbL); see THIRD_PARTY_NOTICES.md.
         // About & credits (attribution required by Open Food Facts' ODbL; Apache-2.0 notices)
-        SoftCard {
-            Text("ℹ️  " + stringResource(R.string.credits_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.credits_body), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
+        item {
+            SoftCard {
+                Text("ℹ️  " + stringResource(R.string.credits_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.credits_body), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
+            }
         }
 
-        Text(
-            "Gym & Ñam · v" + com.gymnam.app.BuildConfig.VERSION_NAME,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        item {
+            Text(
+                "Gym & Ñam · v" + com.gymnam.app.BuildConfig.VERSION_NAME,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 
     pendingRestore?.let { uri ->
