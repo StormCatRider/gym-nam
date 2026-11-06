@@ -94,7 +94,7 @@ class RecipeEditorViewModel(
     }
 
     // Waits 0.15 s after your last letter, then searches.
-    fun setQuery(q: String) {
+    fun updateQuery(q: String) {
         query = q
         searchJob?.cancel()
         searchJob = viewModelScope.launch {

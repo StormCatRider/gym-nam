@@ -118,7 +118,7 @@ class SetupViewModel(
     fun choosePalette(id: String) { palette = id; viewModelScope.launch { settings.setPalette(id) } }
 
     // Picking a goal sets a sensible starting rate: lose 1 lb/week, gain 0.5 lb/week.
-    fun setGoal(g: GoalType) {
+    fun chooseGoal(g: GoalType) {
         goal = g
         rate = when (g) { GoalType.LOSE -> 1.0; GoalType.GAIN -> 0.5; GoalType.MAINTAIN -> 0.0 }
     }

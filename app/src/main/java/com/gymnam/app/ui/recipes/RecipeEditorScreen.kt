@@ -234,7 +234,7 @@ private fun IngredientSheet(vm: RecipeEditorViewModel, onDismiss: () -> Unit) {
             val item = picked
             if (item == null) {
                 OutlinedTextField(
-                    vm.query, vm::setQuery, Modifier.fillMaxWidth(), singleLine = true, shape = CircleShape,
+                    vm.query, vm::updateQuery, Modifier.fillMaxWidth(), singleLine = true, shape = CircleShape,
                     placeholder = { Text(stringResource(R.string.search_foods)) }, leadingIcon = { Icon(Icons.Filled.Search, null) }
                 )
                 LazyColumn(Modifier.heightIn(max = 420.dp).padding(top = 8.dp)) {

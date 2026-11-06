@@ -218,9 +218,9 @@ private fun ActivityStep(vm: SetupViewModel) {
 @Composable
 private fun GoalStep(vm: SetupViewModel) {
     StepTitle(R.string.setup_goal_title)
-    Choice(vm.goal == GoalType.LOSE, { vm.setGoal(GoalType.LOSE) }, "📉  " + stringResource(R.string.goal_lose), null)
-    Choice(vm.goal == GoalType.MAINTAIN, { vm.setGoal(GoalType.MAINTAIN) }, "⚖️  " + stringResource(R.string.goal_maintain), null)
-    Choice(vm.goal == GoalType.GAIN, { vm.setGoal(GoalType.GAIN) }, "📈  " + stringResource(R.string.goal_gain), null)
+    Choice(vm.goal == GoalType.LOSE, { vm.chooseGoal(GoalType.LOSE) }, "📉  " + stringResource(R.string.goal_lose), null)
+    Choice(vm.goal == GoalType.MAINTAIN, { vm.chooseGoal(GoalType.MAINTAIN) }, "⚖️  " + stringResource(R.string.goal_maintain), null)
+    Choice(vm.goal == GoalType.GAIN, { vm.chooseGoal(GoalType.GAIN) }, "📈  " + stringResource(R.string.goal_gain), null)
     if (vm.goal != GoalType.MAINTAIN) {
         Text(stringResource(R.string.rate_per_week), style = MaterialTheme.typography.labelLarge)
         val rates = if (vm.goal == GoalType.LOSE) listOf(0.5, 1.0, 1.5, 2.0) else listOf(0.25, 0.5)
