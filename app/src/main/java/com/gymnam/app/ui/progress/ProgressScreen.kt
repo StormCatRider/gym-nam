@@ -13,7 +13,7 @@
 package com.gymnam.app.ui.progress
 
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.LocalMetric
+import com.gymnam.app.data.Units
 import com.gymnam.app.data.fmtNum
 import com.gymnam.app.ui.common.SoftCard
 import com.gymnam.app.ui.picker.Header
@@ -63,7 +65,8 @@ fun ProgressScreen(
 ) {
     val s by vm.state.collectAsStateWithLifecycle()
     val range by vm.range.collectAsStateWithLifecycle()
-    val over = macroColors(isSystemInDarkTheme()).over
+    val over = macroColors(isAppDark()).over
+    val metric = LocalMetric.current
     val dateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 
     LazyColumn(
@@ -124,14 +127,14 @@ fun ProgressScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
                 } else {
                     Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Stat(stringResource(R.string.latest), "${fmtNum(s.latestLb!!)} lb")
-                        s.trendLb?.let { Stat(stringResource(R.string.trend_7d), "${fmtNum((it * 10).roundToInt() / 10.0)} lb") }
-                        s.changeLb?.let {
-                            val v = (it * 10).roundToInt() / 10.0
-                            Stat(stringResource(R.string.change), (if (v > 0) "+" else if (v < 0) "−" else "") + "${fmtNum(abs(v))} lb")
-                        }
+                        // Units.weight / weightChange show lb or kg depending on your Settings.
+                        Stat(stringResource(R.string.latest), Units.weight(s.latestLb!!, metric))
+                        s.trendLb?.let { Stat(stringResource(R.string.trend_7d), Units.weight(it, metric)) }
+                        s.changeLb?.let { Stat(stringResource(R.string.change), Units.weightChange(it, metric)) }
                     }
-                    WeightChart(s.weights, s.trend, s.from, s.to)
+                    // The chart draws whatever numbers it gets, so convert lb -> kg first when metric.
+                    val toUnit = { p: Point -> p.copy(value = if (metric) p.value / Units.LB_PER_KG else p.value) }
+                    WeightChart(s.weights.map(toUnit), s.trend.map(toUnit), s.from, s.to)
                     Text(stringResource(R.string.trend_explain), style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
                 }
@@ -158,7 +161,7 @@ fun ProgressScreen(
             SoftCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("💧  " + stringResource(R.string.water), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-                    Text(stringResource(R.string.water_avg, s.avgWater, s.waterGoal), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.water_avg, Units.water(s.avgWater.toDouble(), metric), Units.water(s.waterGoal.toDouble(), metric)), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }

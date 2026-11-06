@@ -20,6 +20,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -63,7 +64,21 @@ data class AppSettings(
     val healthConnect: Boolean = false,
     val logReminder: Boolean = false,
     val logReminderHour: Int = 20,
-    val weeklySummary: Boolean = false
+    val weeklySummary: Boolean = false,
+    /** Units for showing/typing body weight, height and water. false = imperial (default). */
+    val metric: Boolean = false,
+    /** "system" = follow the phone, "light", or "dark". */
+    val themeMode: String = "system",
+    /** Name or nickname for "Hi, Hugo" (empty = not set). */
+    val userName: String = "",
+    /** Allergy ids you picked on the Me page ("peanut", "milk"...); see data/Allergens.kt. */
+    val allergies: Set<String> = emptySet(),
+    /** Diet ids ("vegetarian", "vegan", "no_pork", "lactose_free"). */
+    val diets: Set<String> = emptySet(),
+    /** Extra words you typed under "Other" allergies, comma-separated ("kiwi, mustard"). */
+    val otherAllergies: String = "",
+    /** Changes every time you set or remove your photo, so the screen reloads it. 0 = no photo. */
+    val photoVersion: Long = 0
 )
 
 class SettingsStore(private val context: Context) {
@@ -89,6 +104,13 @@ class SettingsStore(private val context: Context) {
         val logReminder = booleanPreferencesKey("log_reminder")
         val logHour = intPreferencesKey("log_reminder_hour")
         val weekly = booleanPreferencesKey("weekly_summary")
+        val metric = booleanPreferencesKey("metric_units")
+        val theme = stringPreferencesKey("theme_mode")
+        val name = stringPreferencesKey("user_name")
+        val allergies = stringSetPreferencesKey("allergies")
+        val diets = stringSetPreferencesKey("diets")
+        val otherAllergies = stringPreferencesKey("other_allergies")
+        val photo = longPreferencesKey("photo_version")
     }
 
     // Live stream of all settings. "p[K.cal] ?: d.calories" = use the saved value,
@@ -115,7 +137,14 @@ class SettingsStore(private val context: Context) {
             healthConnect = p[K.hc] ?: false,
             logReminder = p[K.logReminder] ?: false,
             logReminderHour = p[K.logHour] ?: 20,
-            weeklySummary = p[K.weekly] ?: false
+            weeklySummary = p[K.weekly] ?: false,
+            metric = p[K.metric] ?: false,
+            themeMode = p[K.theme] ?: "system",
+            userName = p[K.name] ?: "",
+            allergies = p[K.allergies] ?: emptySet(),
+            diets = p[K.diets] ?: emptySet(),
+            otherAllergies = p[K.otherAllergies] ?: "",
+            photoVersion = p[K.photo] ?: 0
         )
     }
 
@@ -151,4 +180,12 @@ class SettingsStore(private val context: Context) {
     suspend fun setLogReminder(on: Boolean) = context.dataStore.edit { it[K.logReminder] = on }
     suspend fun setLogReminderHour(h: Int) = context.dataStore.edit { it[K.logHour] = h }
     suspend fun setWeeklySummary(on: Boolean) = context.dataStore.edit { it[K.weekly] = on }
+    suspend fun setMetric(on: Boolean) = context.dataStore.edit { it[K.metric] = on }
+    suspend fun setThemeMode(mode: String) = context.dataStore.edit { it[K.theme] = mode }
+    suspend fun setUserName(name: String) = context.dataStore.edit { it[K.name] = name.trim() }
+    suspend fun setAllergies(ids: Set<String>) = context.dataStore.edit { it[K.allergies] = ids }
+    suspend fun setDiets(ids: Set<String>) = context.dataStore.edit { it[K.diets] = ids }
+    suspend fun setOtherAllergies(text: String) = context.dataStore.edit { it[K.otherAllergies] = text }
+    /** Pass 0 when the photo was removed, or the current time when a new one was saved. */
+    suspend fun setPhotoVersion(v: Long) = context.dataStore.edit { it[K.photo] = v }
 }

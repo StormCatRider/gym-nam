@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gymnam.app.R
+import com.gymnam.app.data.LocalMetric
+import com.gymnam.app.data.Units
 import com.gymnam.app.data.ExerciseEntry
 import com.gymnam.app.ui.common.EmojiBadge
 import com.gymnam.app.ui.common.SoftCard
@@ -54,13 +56,14 @@ private val WaterBlue = Color(0xFF8EC5EC)
 /** Water: one tap adds a glass. Glasses are 8 fl oz each, so a 64 fl oz goal = 8 glasses. */
 @Composable
 fun WaterCard(flOz: Double, goal: Int, onAdd: (Double) -> Unit, onUndo: () -> Unit) {
+    val metric = LocalMetric.current
     val frac by animateFloatAsState((flOz / goal.coerceAtLeast(1)).toFloat().coerceIn(0f, 1f), tween(700), label = "water")
     SoftCard(padding = 16.dp) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("💧", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.width(10.dp))
             Text(stringResource(R.string.water), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            Text(stringResource(R.string.water_of_goal, flOz.roundToInt(), goal), style = MaterialTheme.typography.labelLarge,
+            Text(stringResource(R.string.water_of_goal, Units.water(flOz, metric), Units.water(goal.toDouble(), metric)), style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (flOz > 0) IconButton(onClick = onUndo) {
                 Icon(Icons.AutoMirrored.Filled.Undo, stringResource(R.string.undo), tint = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -68,8 +71,10 @@ fun WaterCard(flOz: Double, goal: Int, onAdd: (Double) -> Unit, onUndo: () -> Un
         }
         // Glasses
         // Number of glass icons = goal / 8 fl oz (between 1 and 16). Full ones show 🥛.
-        val glasses = (goal / 8).coerceIn(1, 16)
-        val full = (flOz / 8).toInt()
+        // One glass = 8 fl oz (imperial) or 250 ml (metric).
+        val glass = Units.glassFlOz(metric)
+        val glasses = (goal / glass).roundToInt().coerceIn(1, 16)
+        val full = (flOz / glass).toInt()
         Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
             repeat(glasses) { i -> Text(if (i < full) "🥛" else "◌", style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -78,9 +83,10 @@ fun WaterCard(flOz: Double, goal: Int, onAdd: (Double) -> Unit, onUndo: () -> Un
             Box(Modifier.fillMaxWidth(frac).fillMaxHeight().clip(CircleShape).background(WaterBlue))
         }
         Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("fl oz", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            listOf(8.0, 12.0, 16.0).forEach { oz ->
-                FilledTonalButton(onClick = { onAdd(oz) }, shape = CircleShape) { Text("+${oz.roundToInt()}") }
+            Text(if (metric) "ml" else "fl oz", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            // Quick buttons: +8/+12/+16 fl oz, or +250/+330/+500 ml (saved as fl oz either way).
+            (if (metric) listOf(250, 330, 500) else listOf(8, 12, 16)).forEach { n ->
+                FilledTonalButton(onClick = { onAdd(Units.flOzFrom(n.toDouble(), metric)) }, shape = CircleShape) { Text("+$n") }
             }
         }
     }

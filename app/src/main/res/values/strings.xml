@@ -76,7 +76,7 @@
     <string name="progress_soon">Weight trend, history and charts arrive in stage 4.</string>
 
     <!-- Settings -->
-    <string name="settings_theme">Color theme</string>
+    <string name="settings_theme">🎨  Appearance</string>
     <string name="settings_targets">Daily targets</string>
     <string name="settings_targets_hint">Fine-tune the numbers from setup if you like. Saving here overrides them.</string>
     <string name="settings_language">Language</string>
@@ -251,8 +251,8 @@
     <string name="restore_confirm_body">Everything in the app (food log, weight, water, exercise, My foods, My meals, fridge, recipes) will be replaced by the backup. Settings and goals stay as they are.</string>
     <string name="best_streak">Best streak: %1$d days</string>
     <string name="days_logged">days logged</string>
-    <string name="burn_estimate">Estimate: %1$s MET × your %2$s lb × time. Edit it if your watch says otherwise.</string>
-    <string name="burn_estimate_default">Estimate: %1$s MET × 170 lb × time. Log your weight for a better number.</string>
+    <string name="burn_estimate">Estimate: %1$s MET × your %2$s × time. Edit it if your watch says otherwise.</string>
+    <string name="burn_estimate_default">Estimate: %1$s MET × %2$s × time. Log your weight for a better number.</string>
     <string name="burned_kcal">%1$d kcal burned</string>
     <string name="calories_burned">Calories burned</string>
     <string name="calories_title">Calories</string>
@@ -265,15 +265,15 @@
     <string name="history">History</string>
     <string name="log_weight">Log weight</string>
     <string name="weight">Weight</string>
-    <string name="last_weight">Last: %1$s lb on %2$s</string>
+    <string name="last_weight">Last: %1$s on %2$s</string>
     <string name="range_week">7 days</string>
     <string name="range_month">30 days</string>
     <string name="range_quarter">90 days</string>
     <string name="range_year">1 year</string>
     <string name="trend_explain">Dots = daily weigh-ins · line = 7-day average. Daily weight swings with water and food; the line shows the real direction.</string>
     <string name="water">Water</string>
-    <string name="water_avg">avg %1$d / %2$d fl oz a day</string>
-    <string name="water_of_goal">%1$d / %2$d fl oz</string>
+    <string name="water_avg">avg %1$s / %2$s a day</string>
+    <string name="water_of_goal">%1$s / %2$s</string>
     <string name="water_goal">Water goal</string>
     <string name="water_goal_hint">64 fl oz (8 glasses) is a common daily target; more if you train or it’s hot.</string>
     <string name="weekly_avg_note">Bars are weekly averages of the days you logged.</string>
@@ -322,7 +322,7 @@
     <string name="goal_maintain">Maintain</string>
     <string name="goal_gain">Gain weight</string>
     <string name="goals_title">Goals</string>
-    <string name="goals_summary">Based on %1$s lb · %2$s · %3$s</string>
+    <string name="goals_summary">Based on %1$s · %2$s · %3$s</string>
     <string name="recalculate_goals">Recalculate goals</string>
     <string name="hc_activity">Daily activity · %1$s steps</string>
     <string name="hc_body">Off by default. Reads steps and active calories; writes the foods you log and your weight so other apps can use them.</string>
@@ -350,7 +350,7 @@
     <string name="notif_log_body">Take 30 seconds to add what you ate so your trend stays accurate. 🍽️</string>
     <string name="notif_week_title">Your week in Gym &amp; Ñam</string>
     <string name="notif_week_body">Logged %1$d/7 days · avg %2$d kcal (goal %3$d) · %4$d g protein.</string>
-    <string name="notif_week_weight">Weight: %1$s lb vs last week.</string>
+    <string name="notif_week_weight">Weight: %1$s vs last week.</string>
     <string name="per_day">per day</string>
     <string name="protein_per_lb">Protein: %1$s g per lb of body weight</string>
     <string name="protein_per_lb_note">0.7–1.0 g/lb suits most people who lift; higher helps keep muscle while losing fat.</string>
@@ -364,11 +364,11 @@
     <string name="setup_formula_title">Formula &amp; protein</string>
     <string name="setup_result_title">Your daily target</string>
     <string name="setup_incomplete">Go back and fill in your details.</string>
-    <string name="setup_disclaimer">These are estimates from standard formulas, not medical advice. Check your 7-day weight trend after 2–3 weeks and adjust; the app will suggest an update when your trend moves 5 lb.</string>
+    <string name="setup_disclaimer">These are estimates from standard formulas, not medical advice. Check your 7-day weight trend after 2–3 weeks and adjust; the app will suggest an update when your trend moves 5 lb (2.3 kg).</string>
     <string name="setup_theme_title">Pick your colors</string>
     <string name="setup_theme_body">You can change this any time in Settings.</string>
     <string name="suggest_title">Time to update your goals?</string>
-    <string name="suggest_body">Your 7-day trend is %1$s lb; your goals use %2$s lb. Update from %3$d to %4$d kcal?</string>
+    <string name="suggest_body">Your 7-day trend is %1$s; your goals use %2$s. Update from %3$d to %4$d kcal?</string>
     <string name="tour1_title">Log food in seconds</string>
     <string name="tour1_body">Tap + and search 1,000+ foods, scan a barcode, or re-add a saved meal. The ring shows what’s left.</string>
     <string name="tour2_title">Your fridge, your recipes</string>
@@ -380,4 +380,24 @@
     <string name="credits_title">About &amp; credits</string>
     <string name="credits_body">• Online food data: Open Food Facts (openfoodfacts.org), © Open Food Facts contributors, under the Open Database License (ODbL).\n• Online recipes: TheMealDB (themealdb.com). The free key is for personal use; publishing the app needs their supporter key.\n• Built-in food values: standard nutrition reference figures (USDA FoodData Central style). Facts, not copied text.\n• Exercise estimates: MET values from the Compendium of Physical Activities.\n• Built-in recipes, texts and the app icon are original to Gym &amp; Ñam. Food icons are your phone’s emoji.\n• Open-source libraries: Kotlin, AndroidX/Jetpack (Compose, Room, CameraX, WorkManager, Glance, Biometric, Health Connect) and ZXing, under the Apache License 2.0.</string>
     <string name="off_attribution">Data © Open Food Facts contributors · ODbL</string>
+    <string name="rate_per_week_kg">How fast (kg per week)</string>
+    <string name="rate_note_lose_kg">0.25–0.5 kg a week is sustainable for most people. Faster is harder to keep and can cost muscle.</string>
+    <string name="rate_note_gain_kg">Slow gains (0.1–0.25 kg a week) keep fat gain lower.</string>
+    <string name="protein_per_kg">Protein: %1$s g per kg of body weight</string>
+    <string name="protein_per_kg_note">1.6–2.2 g/kg suits most people who lift; higher helps keep muscle while losing fat.</string>
+    <string name="calc_units_metric">W = %1$s kg · H = %2$s cm</string>
+    <string name="calc_goal_metric">Goal: %1$s kg/week (= %2$s lb) × 3,500 kcal per lb ÷ 7 days = %3$s kcal/day</string>
+    <string name="calc_protein_metric">Protein = %1$s g/kg × %2$s kg = %3$d g</string>
+    <string name="setup_units_title">Which units do you use?</string>
+    <string name="setup_units_body">For your weight, height and water. Food is always in grams or servings.</string>
+    <string name="units_title">Units</string>
+    <string name="units_imperial">Imperial</string>
+    <string name="units_imperial_d">lb · ft/in · fl oz</string>
+    <string name="units_metric">Metric</string>
+    <string name="units_metric_d">kg · cm · ml / L</string>
+    <string name="units_note">You can change this anytime in Settings; your data stays the same.</string>
+    <string name="theme_system">📱 Phone</string>
+    <string name="theme_light">☀️ Light</string>
+    <string name="theme_dark">🌙 Dark</string>
+    <string name="water_goal_hint_metric">About 2 L (8 glasses of 250 ml) is a common daily target; more if you train or it\'s hot.</string>
 </resources>

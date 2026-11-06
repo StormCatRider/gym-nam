@@ -56,7 +56,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -180,7 +180,7 @@ fun FridgeItemScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.expires), style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-                    vm.expiryDay?.let { ExpiryChip(it, today.toEpochDay(), isSystemInDarkTheme()) }
+                    vm.expiryDay?.let { ExpiryChip(it, today.toEpochDay(), isAppDark()) }
                 }
                 Text(
                     vm.expiryDay?.let { LocalDate.ofEpochDay(it).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)) }

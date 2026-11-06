@@ -19,6 +19,8 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -125,12 +127,27 @@ private val AppType = base.copy(
 // Wraps the whole app: everything inside uses these colors, shapes and fonts.
 // isSystemInDarkTheme() = is the phone in dark mode right now?
 @Composable
-fun GymNamTheme(paletteId: String, content: @Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
-    MaterialTheme(
-        colorScheme = scheme(paletteById(paletteId), dark),
-        shapes = AppShapes,
-        typography = AppType,
-        content = content
-    )
+fun GymNamTheme(paletteId: String, themeMode: String = "system", content: @Composable () -> Unit) {
+    // themeMode comes from Settings: "light", "dark", or "system" (= follow the phone).
+    val dark = when (themeMode) {
+        "light" -> false
+        "dark" -> true
+        else -> isSystemInDarkTheme()
+    }
+    // LocalDarkTheme lets any screen ask "is the app dark right now?" via isAppDark().
+    CompositionLocalProvider(LocalDarkTheme provides dark) {
+        MaterialTheme(
+            colorScheme = scheme(paletteById(paletteId), dark),
+            shapes = AppShapes,
+            typography = AppType,
+            content = content
+        )
+    }
 }
+
+/** true while the app is showing its dark theme (set by GymNamTheme, which follows your Settings). */
+val LocalDarkTheme = staticCompositionLocalOf { false }
+
+/** Use this instead of isSystemInDarkTheme(), so the Light/Dark choice in Settings is respected. */
+@Composable
+fun isAppDark(): Boolean = LocalDarkTheme.current

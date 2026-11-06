@@ -49,6 +49,8 @@ class SettingsViewModel(private val app: GymNamApp) : ViewModel() {
     fun setTargets(t: Targets) = viewModelScope.launch { store.setTargets(t) }
     fun setInternet(on: Boolean) = viewModelScope.launch { store.setInternet(on) }
     fun setWaterGoal(flOz: Int) = viewModelScope.launch { store.setWaterGoal(flOz) }
+    fun setMetric(on: Boolean) = viewModelScope.launch { store.setMetric(on) }
+    fun setThemeMode(mode: String) = viewModelScope.launch { store.setThemeMode(mode) }
     fun setWidgetShowWeight(on: Boolean) = viewModelScope.launch { store.setWidgetShowWeight(on) }
     fun setAutoBackup(on: Boolean) = viewModelScope.launch { store.setAutoBackup(on) }
     fun clearMsg() { _msg.value = null }

@@ -14,7 +14,7 @@ package com.gymnam.app.ui.fridge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -107,7 +107,7 @@ fun FridgeTab(
     val deletedMsg = stringResource(R.string.deleted)
     val undoLabel = stringResource(R.string.undo)
     val today = vm.today
-    val dark = isSystemInDarkTheme()
+    val dark = isAppDark()
 
     LazyColumn(
         contentPadding = PaddingValues(

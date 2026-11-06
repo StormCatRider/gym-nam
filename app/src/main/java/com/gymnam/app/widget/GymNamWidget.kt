@@ -38,7 +38,7 @@ import androidx.glance.unit.ColorProvider
 import com.gymnam.app.GymNamApp
 import com.gymnam.app.MainActivity
 import com.gymnam.app.R
-import com.gymnam.app.data.fmtNum
+import com.gymnam.app.data.Units
 import com.gymnam.app.ui.theme.paletteById
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -51,7 +51,7 @@ private data class WidgetData(
     val left: Int, val goal: Int, val eaten: Int,
     val protein: Int, val carbs: Int, val fat: Int,
     val waterFlOz: Int, val waterGoal: Int,
-    val weightLb: Double?, val accent: Color
+    val weightLb: Double?, val accent: Color, val metric: Boolean
 )
 
 // Calories left = (daily goal + exercise burned) - calories eaten.
@@ -72,7 +72,8 @@ private suspend fun load(context: Context): WidgetData {
         waterFlOz = t.waterNow(today).roundToInt(), waterGoal = s.waterGoalFlOz,
         // Weight only if you turned it on in Settings (off by default, for privacy).
         weightLb = if (s.widgetShowWeight) t.latestWeightNow()?.lb else null,
-        accent = paletteById(s.paletteId).accentLight
+        accent = paletteById(s.paletteId).accentLight,
+        metric = s.metric
     )
 }
 
@@ -109,11 +110,11 @@ class GymNamWidget : GlanceAppWidget() {
                 )
                 Spacer(GlanceModifier.height(8.dp))
                 Text(
-                    "P ${d.protein} · C ${d.carbs} · F ${d.fat} g   💧 ${d.waterFlOz}/${d.waterGoal} fl oz",
+                    "P ${d.protein} · C ${d.carbs} · F ${d.fat} g   💧 ${Units.water(d.waterFlOz.toDouble(), d.metric)} / ${Units.water(d.waterGoal.toDouble(), d.metric)}",
                     style = TextStyle(color = soft, fontSize = 12.sp)
                 )
                 d.weightLb?.let {
-                    Text("⚖️ ${fmtNum(it)} lb", style = TextStyle(color = soft, fontSize = 12.sp))
+                    Text("⚖️ ${Units.weight(it, d.metric)}", style = TextStyle(color = soft, fontSize = 12.sp))
                 }
             }
         }

@@ -17,7 +17,7 @@ package com.gymnam.app.ui.recipes
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -182,7 +182,7 @@ private fun Message(title: String, body: String) {
 // The recipe content itself (header, nutrition, ingredients, steps).
 @Composable
 private fun RecipeBody(r: RecipeModel, fridge: FridgeView) {
-    val macros = macroColors(isSystemInDarkTheme())
+    val macros = macroColors(isAppDark())
     // Header
     Row(verticalAlignment = Alignment.CenterVertically) {
         Surface(Modifier.size(72.dp), shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {

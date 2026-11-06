@@ -30,8 +30,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gymnam.app.data.AppSettings
+import com.gymnam.app.data.LocalMetric
 import com.gymnam.app.ui.nav.MainScaffold
 import com.gymnam.app.ui.setup.SetupScreen
 import com.gymnam.app.ui.setup.SetupViewModel
@@ -77,7 +80,10 @@ class MainActivity : FragmentActivity() {
         setContent {
             // Wait for settings so nothing flashes before the lock or the setup screen.
             val settings: AppSettings? by app.settings.settings.collectAsStateWithLifecycle(initialValue = null)
-            settings?.let { s -> GymNamTheme(paletteId = s.paletteId) {
+            // themeMode = Light / Dark / follow phone (Settings). LocalMetric tells every screen
+            // whether to show kg/cm/ml or lb/ft/fl oz (see data/Units.kt).
+            settings?.let { s -> GymNamTheme(paletteId = s.paletteId, themeMode = s.themeMode) {
+              CompositionLocalProvider(LocalMetric provides s.metric) {
                 // "when" is like a list of if/else checks; the first one that is true wins.
                 when {
                     s.lockEnabled && !unlocked -> LockScreen(::authenticate)
@@ -89,6 +95,7 @@ class MainActivity : FragmentActivity() {
                     }
                     else -> MainScaffold()
                 }
+              }
             } }
         }
     }
@@ -157,7 +164,9 @@ private fun LockScreen(onUnlock: () -> Unit) {
     LaunchedEffect(Unit) { onUnlock() }
     // Box = a container that stacks things. Column = puts things one under another.
     // Spacer = empty space. "dp" = a size unit that looks the same on every phone.
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
+    // Surface sets both the background and a readable text color (also in night mode).
+    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             Text("🔒", style = MaterialTheme.typography.displayMedium)
             Spacer(Modifier.height(12.dp))
@@ -165,5 +174,6 @@ private fun LockScreen(onUnlock: () -> Unit) {
             Spacer(Modifier.height(20.dp))
             Button(onClick = onUnlock, shape = CircleShape) { Text(stringResource(R.string.unlock)) }
         }
+    }
     }
 }

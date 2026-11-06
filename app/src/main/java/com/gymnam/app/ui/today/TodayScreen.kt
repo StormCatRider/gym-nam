@@ -62,7 +62,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -115,7 +115,7 @@ fun TodayScreen(
     var toDelete by remember { mutableStateOf<FoodEntry?>(null) }
     var toSave by remember { mutableStateOf<Meal?>(null) }
     val savedMsg = stringResource(R.string.meal_saved)
-    val macros = macroColors(isSystemInDarkTheme())
+    val macros = macroColors(isAppDark())
     val deletedMsg = stringResource(R.string.deleted)
     val undoLabel = stringResource(R.string.undo)
 
@@ -140,7 +140,8 @@ fun TodayScreen(
                     Column(Modifier.padding(16.dp)) {
                         Text("⚖️  " + stringResource(R.string.suggest_title), style = MaterialTheme.typography.titleSmall)
                         Text(
-                            stringResource(R.string.suggest_body, com.gymnam.app.data.fmtNum(g.trendLb), com.gymnam.app.data.fmtNum(g.oldLb),
+                            stringResource(R.string.suggest_body, com.gymnam.app.data.Units.weight(g.trendLb, com.gymnam.app.data.LocalMetric.current),
+                                com.gymnam.app.data.Units.weight(g.oldLb, com.gymnam.app.data.LocalMetric.current),
                                 state.targets.calories, g.targets.calories),
                             style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 4.dp)
                         )

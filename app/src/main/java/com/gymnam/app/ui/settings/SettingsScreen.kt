@@ -50,7 +50,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,7 +63,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,6 +76,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.Units
+import com.gymnam.app.data.fmtNum
+import com.gymnam.app.ui.common.toNumberOrNull
 import com.gymnam.app.data.Targets
 import com.gymnam.app.ui.common.SoftCard
 import com.gymnam.app.ui.theme.Palettes
@@ -79,13 +86,14 @@ import kotlinx.coroutines.launch
 
 // rememberLauncherForActivityResult = opens an Android system window (file
 // picker, permission prompt...) and gets the answer back here.
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPadding: PaddingValues, onOpenSetup: () -> Unit) {
     val s by vm.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
-    val dark = isSystemInDarkTheme()
+    val dark = isAppDark()
     val savedMsg = stringResource(R.string.saved)
     val msg by vm.msg.collectAsStateWithLifecycle()
     val working by vm.working.collectAsStateWithLifecycle()
@@ -131,7 +139,9 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
         else scope.launch { snackbar.showSnackbar(hcDeniedMsg) }
     }
 
-    LaunchedEffect(s?.waterGoalFlOz) { if (water.isEmpty()) s?.let { water = it.waterGoalFlOz.toString() } }
+    // The water goal box shows fl oz (imperial) or liters (metric); refilled when units change.
+    LaunchedEffect(s?.waterGoalFlOz, s?.metric) { s?.let { water = fmtNum(Units.waterGoalValue(it.waterGoalFlOz, it.metric)) } }
+    val metric = s?.metric == true
 
     var cal by remember { mutableStateOf("") }
     var p by remember { mutableStateOf("") }
@@ -153,11 +163,21 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
                 bottom = contentPadding.calculateBottomPadding() + 24.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Text(stringResource(R.string.tab_settings), style = MaterialTheme.typography.headlineMedium)
-
-        // Theme
+        // (The page title now lives in the colored top bar.)
+        // Theme: Light / Dark / follow the phone, then the color palette.
         SoftCard {
             Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.titleMedium)
+            // Saved right away; the whole app switches instantly.
+            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                val modes = listOf("system" to R.string.theme_system, "light" to R.string.theme_light, "dark" to R.string.theme_dark)
+                modes.forEachIndexed { i, (id, label) ->
+                    SegmentedButton(
+                        selected = (s?.themeMode ?: "system") == id,
+                        onClick = { haptics.performHapticFeedback(HapticFeedbackType.LongPress); vm.setThemeMode(id) },
+                        shape = SegmentedButtonDefaults.itemShape(i, modes.size)
+                    ) { Text(stringResource(label), maxLines = 1) }
+                }
+            }
             Spacer(Modifier.height(14.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Palettes.forEach { pal ->
@@ -183,11 +203,28 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
             }
         }
 
+        // Units: Imperial (lb, ft/in, fl oz) or Metric (kg, cm, ml/L). Only changes how numbers are
+        // shown and typed; everything is stored the same way, so switching is always safe.
+        SoftCard {
+            Text("📏  " + stringResource(R.string.units_title), style = MaterialTheme.typography.titleMedium)
+            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                SegmentedButton(!metric, { vm.setMetric(false) }, SegmentedButtonDefaults.itemShape(0, 2)) {
+                    Text(stringResource(R.string.units_imperial), maxLines = 1)
+                }
+                SegmentedButton(metric, { vm.setMetric(true) }, SegmentedButtonDefaults.itemShape(1, 2)) {
+                    Text(stringResource(R.string.units_metric), maxLines = 1)
+                }
+            }
+            Text(stringResource(if (metric) R.string.units_metric_d else R.string.units_imperial_d) + " · " + stringResource(R.string.units_note),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp))
+        }
+
         // Goals from the setup wizard
         SoftCard {
             Text("🎯  " + stringResource(R.string.goals_title), style = MaterialTheme.typography.titleMedium)
             s?.profile?.let { pr ->
-                Text(stringResource(R.string.goals_summary, com.gymnam.app.data.fmtNum(pr.weightLb),
+                Text(stringResource(R.string.goals_summary, Units.weight(pr.weightLb, metric),
                     stringResource(when (pr.goal) {
                         com.gymnam.app.data.GoalType.LOSE -> R.string.goal_lose
                         com.gymnam.app.data.GoalType.MAINTAIN -> R.string.goal_maintain
@@ -263,16 +300,17 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
         SoftCard {
             Text("💧  " + stringResource(R.string.water_goal), style = MaterialTheme.typography.titleMedium)
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(water, { water = it.filter(Char::isDigit) }, Modifier.weight(1f), singleLine = true,
-                    suffix = { Text("fl oz") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                OutlinedTextField(water, { water = it }, Modifier.weight(1f), singleLine = true,
+                    suffix = { Text(if (metric) "L" else "fl oz") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = MaterialTheme.shapes.medium)
                 FilledTonalButton(onClick = {
-                    water.toIntOrNull()?.takeIf { it in 8..256 }?.let {
+                    // Saved as whole fl oz; allowed range 8-256 fl oz (about 0.25-7.5 L).
+                    water.toNumberOrNull()?.let { Units.waterGoalFlOz(it, metric) }?.takeIf { it in 8..256 }?.let {
                         vm.setWaterGoal(it); scope.launch { snackbar.showSnackbar(savedMsg) }
                     }
                 }, shape = CircleShape, modifier = Modifier.padding(start = 8.dp)) { Text(stringResource(R.string.save)) }
             }
-            Text(stringResource(R.string.water_goal_hint), style = MaterialTheme.typography.bodySmall,
+            Text(stringResource(if (metric) R.string.water_goal_hint_metric else R.string.water_goal_hint), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
         }
 
@@ -422,7 +460,7 @@ fun SettingsScreen(vm: SettingsViewModel, snackbar: SnackbarHostState, contentPa
         }
 
         Text(
-            "Gym & Ñam · v1.0.1",
+            "Gym & Ñam · v" + com.gymnam.app.BuildConfig.VERSION_NAME,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

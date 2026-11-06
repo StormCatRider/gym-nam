@@ -70,7 +70,8 @@ import com.gymnam.app.data.Sex
 import com.gymnam.app.data.fmtNum
 import com.gymnam.app.ui.common.SoftCard
 import com.gymnam.app.ui.theme.Palettes
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
+import com.gymnam.app.data.Units
 import java.text.NumberFormat
 
 // onCancel = null on first launch (you can't skip setup); from Settings it's a
@@ -78,7 +79,10 @@ import java.text.NumberFormat
 @Composable
 fun SetupScreen(vm: SetupViewModel, onDone: () -> Unit, onCancel: (() -> Unit)?) {
     val haptics = LocalHapticFeedback.current
-    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).systemBarsPadding().imePadding()) {
+    // Surface (not just a background color) also sets the TEXT color for everything inside.
+    // Before, texts here defaulted to black, which was hard to read in night mode.
+    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Column(Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
         // Progress dots
         Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.Center) {
             vm.steps.indices.forEach { i ->
@@ -104,11 +108,12 @@ fun SetupScreen(vm: SetupViewModel, onDone: () -> Unit, onCancel: (() -> Unit)?)
                     Step.TOUR2 -> Tour("🧊", R.string.tour2_title, R.string.tour2_body)
                     Step.TOUR3 -> Tour("🔒", R.string.tour3_title, R.string.tour3_body)
                     Step.THEME -> ThemeStep(vm)
+                    Step.UNITS -> UnitsStep(vm)
                     Step.ABOUT -> AboutStep(vm)
                     Step.ACTIVITY -> ActivityStep(vm)
                     Step.GOAL -> GoalStep(vm)
                     Step.FORMULA -> FormulaStep(vm)
-                    Step.RESULT -> ResultStep(vm.profile(), vm.result)
+                    Step.RESULT -> ResultStep(vm.profile(), vm.result, vm.metric)
                 }
             }
         }
@@ -128,6 +133,7 @@ fun SetupScreen(vm: SetupViewModel, onDone: () -> Unit, onCancel: (() -> Unit)?)
                 shape = CircleShape, contentPadding = PaddingValues(horizontal = 28.dp, vertical = 14.dp)
             ) { Text(stringResource(if (last) R.string.start else R.string.next), style = MaterialTheme.typography.titleMedium) }
         }
+    }
     }
 }
 
@@ -153,7 +159,7 @@ private fun StepTitle(title: Int, subtitle: Int? = null) {
 // Palette circles; tapping one recolors the app immediately.
 @Composable
 private fun ThemeStep(vm: SetupViewModel) {
-    val dark = isSystemInDarkTheme()
+    val dark = isAppDark()
     StepTitle(R.string.setup_theme_title, R.string.setup_theme_body)
     Palettes.forEach { p ->
         val sel = vm.palette == p.id
@@ -175,6 +181,15 @@ private fun ThemeStep(vm: SetupViewModel) {
 }
 
 // Number boxes; Next stays disabled until age, height and weight are in range.
+// The units question: two big choices. Picking one saves it right away (also changeable in Settings).
+@Composable
+private fun UnitsStep(vm: SetupViewModel) {
+    StepTitle(R.string.setup_units_title, R.string.setup_units_body)
+    Choice(!vm.metric, { vm.chooseMetric(false) }, "🇺🇸  " + stringResource(R.string.units_imperial), stringResource(R.string.units_imperial_d))
+    Choice(vm.metric, { vm.chooseMetric(true) }, "🌍  " + stringResource(R.string.units_metric), stringResource(R.string.units_metric_d))
+    Text(stringResource(R.string.units_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
 @Composable
 private fun AboutStep(vm: SetupViewModel) {
     val num = KeyboardOptions(keyboardType = KeyboardType.Decimal)
@@ -187,7 +202,12 @@ private fun AboutStep(vm: SetupViewModel) {
     OutlinedTextField(vm.age, { vm.age = it.filter(Char::isDigit) }, Modifier.fillMaxWidth(), singleLine = true,
         label = { Text(stringResource(R.string.age)) }, suffix = { Text(stringResource(R.string.years)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), shape = MaterialTheme.shapes.medium)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // Height: one box in cm (metric), or two boxes, feet + inches (imperial).
+    if (vm.metric) {
+        OutlinedTextField(vm.cm, { vm.cm = it.filter(Char::isDigit) }, Modifier.fillMaxWidth(), singleLine = true,
+            label = { Text(stringResource(R.string.height)) }, suffix = { Text("cm") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), shape = MaterialTheme.shapes.medium)
+    } else Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(vm.feet, { vm.feet = it.filter(Char::isDigit) }, Modifier.weight(1f), singleLine = true,
             label = { Text(stringResource(R.string.height)) }, suffix = { Text("ft") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), shape = MaterialTheme.shapes.medium)
@@ -195,7 +215,8 @@ private fun AboutStep(vm: SetupViewModel) {
             label = { Text(" ") }, suffix = { Text("in") }, keyboardOptions = num, shape = MaterialTheme.shapes.medium)
     }
     OutlinedTextField(vm.weight, { vm.weight = it }, Modifier.fillMaxWidth(), singleLine = true,
-        label = { Text(stringResource(R.string.weight)) }, suffix = { Text("lb") }, keyboardOptions = num, shape = MaterialTheme.shapes.medium)
+        label = { Text(stringResource(R.string.weight)) }, suffix = { Text(Units.weightUnit(vm.metric)) },
+        keyboardOptions = num, shape = MaterialTheme.shapes.medium)
 }
 
 @Composable
@@ -222,13 +243,22 @@ private fun GoalStep(vm: SetupViewModel) {
     Choice(vm.goal == GoalType.MAINTAIN, { vm.chooseGoal(GoalType.MAINTAIN) }, "⚖️  " + stringResource(R.string.goal_maintain), null)
     Choice(vm.goal == GoalType.GAIN, { vm.chooseGoal(GoalType.GAIN) }, "📈  " + stringResource(R.string.goal_gain), null)
     if (vm.goal != GoalType.MAINTAIN) {
-        Text(stringResource(R.string.rate_per_week), style = MaterialTheme.typography.labelLarge)
-        val rates = if (vm.goal == GoalType.LOSE) listOf(0.5, 1.0, 1.5, 2.0) else listOf(0.25, 0.5)
+        Text(stringResource(if (vm.metric) R.string.rate_per_week_kg else R.string.rate_per_week), style = MaterialTheme.typography.labelLarge)
+        // Chip values are stored in lb/week; the label shows them in your unit (0.5 kg = 1.1 lb).
+        val rates = Units.ratePresetsLb(vm.metric, losing = vm.goal == GoalType.LOSE)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            rates.forEach { r -> FilterChip(vm.rate == r, { vm.rate = r }, shape = CircleShape, label = { Text("${fmtNum(r)} lb") }) }
+            rates.forEach { r ->
+                val shown = if (vm.metric) fmtNum(Math.round(r / Units.LB_PER_KG * 100) / 100.0) + " kg" else fmtNum(r) + " lb"
+                FilterChip(kotlin.math.abs(vm.rate - r) < 0.001, { vm.rate = r }, shape = CircleShape, label = { Text(shown) })
+            }
         }
         Text(
-            stringResource(if (vm.goal == GoalType.LOSE) R.string.rate_note_lose else R.string.rate_note_gain),
+            stringResource(when {
+                vm.goal == GoalType.LOSE && vm.metric -> R.string.rate_note_lose_kg
+                vm.goal == GoalType.LOSE -> R.string.rate_note_lose
+                vm.metric -> R.string.rate_note_gain_kg
+                else -> R.string.rate_note_gain
+            }),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -246,9 +276,14 @@ private fun FormulaStep(vm: SetupViewModel) {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), shape = MaterialTheme.shapes.medium
     )
     Spacer(Modifier.height(8.dp))
-    Text(stringResource(R.string.protein_per_lb, fmtNum((vm.proteinPerLb * 10).toInt() / 10.0)), style = MaterialTheme.typography.titleMedium)
+    // The slider always works in g per lb; in metric the text shows g per kg (x 2.20462).
+    Text(
+        if (vm.metric) stringResource(R.string.protein_per_kg, fmtNum(Units.proteinPerUnit((vm.proteinPerLb * 10).toInt() / 10.0, true)))
+        else stringResource(R.string.protein_per_lb, fmtNum((vm.proteinPerLb * 10).toInt() / 10.0)),
+        style = MaterialTheme.typography.titleMedium
+    )
     Slider(vm.proteinPerLb, { vm.proteinPerLb = (it * 10).toInt() / 10f }, valueRange = 0.6f..1.2f, steps = 5)
-    Text(stringResource(R.string.protein_per_lb_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(stringResource(if (vm.metric) R.string.protein_per_kg_note else R.string.protein_per_lb_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 // Prints every step, e.g.:
@@ -257,7 +292,7 @@ private fun FormulaStep(vm: SetupViewModel) {
 // and a note if the safety floor raised the number.
 /** Shows the math, step by step, with your numbers. */
 @Composable
-private fun ResultStep(p: Profile?, r: GoalResult?) {
+private fun ResultStep(p: Profile?, r: GoalResult?, metric: Boolean) {
     StepTitle(R.string.setup_result_title)
     if (p == null || r == null) { Text(stringResource(R.string.setup_incomplete)); return }
     val nf = NumberFormat.getIntegerInstance()
@@ -274,7 +309,9 @@ private fun ResultStep(p: Profile?, r: GoalResult?) {
         Text(stringResource(R.string.how_calculated), style = MaterialTheme.typography.titleMedium)
         val kg = fmtNum(Math.round(r.weightKg * 10) / 10.0)
         val cm = fmtNum(Math.round(r.heightCm * 10) / 10.0)
-        MathLine(stringResource(R.string.calc_units, fmtNum(p.weightLb), kg, fmtNum(p.heightIn), cm))
+        // Imperial shows the conversion to kg and cm (the formulas need metric); metric shows them directly.
+        MathLine(if (metric) stringResource(R.string.calc_units_metric, kg, cm)
+                 else stringResource(R.string.calc_units, fmtNum(p.weightLb), kg, fmtNum(p.heightIn), cm))
         if (r.formulaUsed == Formula.KATCH) {
             MathLine(stringResource(R.string.calc_lbm, kg, fmtNum(p.bodyFatPct ?: 0.0), fmtNum(Math.round((r.leanKg ?: 0.0) * 10) / 10.0)))
             MathLine(stringResource(R.string.calc_katch, fmtNum(Math.round((r.leanKg ?: 0.0) * 10) / 10.0), nf.format(r.bmr)))
@@ -282,11 +319,18 @@ private fun ResultStep(p: Profile?, r: GoalResult?) {
             MathLine(stringResource(R.string.calc_mifflin, kg, cm, p.age, if (p.sex == Sex.MALE) "+ 5" else "− 161", nf.format(r.bmr)))
         }
         MathLine(stringResource(R.string.calc_tdee, nf.format(r.bmr), fmtNum(p.activity.factor), nf.format(r.tdee)))
-        if (p.goal != GoalType.MAINTAIN) MathLine(stringResource(R.string.calc_goal,
-            (if (p.goal == GoalType.LOSE) "−" else "+") + fmtNum(p.rateLbWeek), (if (r.adjustment < 0) "−" else "+") + nf.format(kotlin.math.abs(r.adjustment))))
+        if (p.goal != GoalType.MAINTAIN) {
+            val sign = if (p.goal == GoalType.LOSE) "−" else "+"
+            val adj = (if (r.adjustment < 0) "−" else "+") + nf.format(kotlin.math.abs(r.adjustment))
+            // Metric: "0.5 kg/week = 1.1 lb x 3,500 kcal / 7 days" (the 3,500 kcal rule is per lb).
+            MathLine(if (metric) stringResource(R.string.calc_goal_metric,
+                    sign + fmtNum(Math.round(p.rateLbWeek / Units.LB_PER_KG * 100) / 100.0), fmtNum(Math.round(p.rateLbWeek * 10) / 10.0), adj)
+                else stringResource(R.string.calc_goal, sign + fmtNum(p.rateLbWeek), adj))
+        }
         if (r.clampedToFloor) Text(stringResource(R.string.calc_floor, nf.format(r.floor)), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 6.dp))
-        MathLine(stringResource(R.string.calc_protein, fmtNum(p.proteinPerLb), fmtNum(p.weightLb), r.targets.proteinG))
+        MathLine(if (metric) stringResource(R.string.calc_protein_metric, fmtNum(Units.proteinPerUnit(p.proteinPerLb, true)), kg, r.targets.proteinG)
+                 else stringResource(R.string.calc_protein, fmtNum(p.proteinPerLb), fmtNum(p.weightLb), r.targets.proteinG))
         MathLine(stringResource(R.string.calc_fat, r.targets.fatG))
         MathLine(stringResource(R.string.calc_carbs, r.targets.carbsG))
     }

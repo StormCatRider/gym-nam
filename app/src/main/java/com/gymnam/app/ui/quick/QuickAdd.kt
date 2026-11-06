@@ -56,6 +56,8 @@ import com.gymnam.app.data.ExerciseEntry
 import com.gymnam.app.data.TrackingDao
 import com.gymnam.app.data.WaterEntry
 import com.gymnam.app.data.WeightEntry
+import com.gymnam.app.data.LocalMetric
+import com.gymnam.app.data.Units
 import com.gymnam.app.data.fmtNum
 import com.gymnam.app.ui.common.toNumberOrNull
 import kotlinx.coroutines.flow.SharingStarted
@@ -102,35 +104,38 @@ enum class Activity(val emoji: String, val met: Double, val labelRes: Int) {
 @Composable
 fun WeightSheet(vm: QuickAddViewModel, day: Long, onDone: () -> Unit) {
     val latest by vm.latestWeight.collectAsStateWithLifecycle()
+    // metric = kg on screen. The number you type is in kg or lb; it's saved as lb.
+    val metric = LocalMetric.current
     var text by remember { mutableStateOf("") }
-    LaunchedEffect(latest) { if (text.isEmpty()) latest?.let { text = fmtNum(it.lb) } }
-    val lb = text.toNumberOrNull()
+    LaunchedEffect(latest) { if (text.isEmpty()) latest?.let { text = fmtNum(Units.weightValue(it.lb, metric)) } }
+    val typed = text.toNumberOrNull()
+    val okRange = Units.weightRange(metric)
     ModalBottomSheet(onDismissRequest = onDone, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp).imePadding()) {
             Text("⚖️  " + stringResource(R.string.log_weight), style = MaterialTheme.typography.titleLarge)
             latest?.let {
-                Text(stringResource(R.string.last_weight, fmtNum(it.lb), java.time.LocalDate.ofEpochDay(it.epochDay).toString()),
+                Text(stringResource(R.string.last_weight, Units.weight(it.lb, metric), java.time.LocalDate.ofEpochDay(it.epochDay).toString()),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Row(Modifier.padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                FilledTonalIconButton(onClick = { text = fmtNum(((lb ?: 0.0) - 0.2).coerceAtLeast(0.0)) }) {
+                FilledTonalIconButton(onClick = { text = fmtNum(Math.round(((typed ?: 0.0) - 0.2).coerceAtLeast(0.0) * 10) / 10.0) }) {
                     Icon(Icons.Filled.Remove, stringResource(R.string.step_down))
                 }
                 OutlinedTextField(
                     text, { text = it }, Modifier.weight(1f).padding(horizontal = 8.dp), singleLine = true,
-                    suffix = { Text("lb") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    suffix = { Text(Units.weightUnit(metric)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     textStyle = MaterialTheme.typography.headlineSmall.copy(textAlign = TextAlign.Center),
                     shape = MaterialTheme.shapes.medium
                 )
-                FilledTonalIconButton(onClick = { text = fmtNum((lb ?: 0.0) + 0.2) }) {
+                FilledTonalIconButton(onClick = { text = fmtNum(Math.round(((typed ?: 0.0) + 0.2) * 10) / 10.0) }) {
                     Icon(Icons.Filled.Add, stringResource(R.string.step_up))
                 }
             }
             Text(stringResource(R.string.weight_tip), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
             Button(
-                onClick = { lb?.takeIf { it in 50.0..800.0 }?.let { vm.saveWeight(day, it); onDone() } },
-                enabled = lb != null && lb in 50.0..800.0,
+                onClick = { typed?.takeIf { it in okRange }?.let { vm.saveWeight(day, Units.lbFrom(it, metric)); onDone() } },
+                enabled = typed != null && typed in okRange,
                 shape = CircleShape, contentPadding = PaddingValues(vertical = 16.dp),
                 modifier = Modifier.fillMaxWidth().padding(top = 18.dp)
             ) { Text(stringResource(R.string.save), style = MaterialTheme.typography.titleMedium) }
@@ -142,27 +147,37 @@ fun WeightSheet(vm: QuickAddViewModel, day: Long, onDone: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WaterSheet(vm: QuickAddViewModel, day: Long, onDone: () -> Unit) {
+    val metric = LocalMetric.current
     var custom by remember { mutableStateOf("") }
+    // Metric only: type the custom amount in ml (false) or liters (true).
+    var inLiters by remember { mutableStateOf(false) }
     ModalBottomSheet(onDismissRequest = onDone, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp).imePadding()) {
             Text("💧  " + stringResource(R.string.add_water), style = MaterialTheme.typography.titleLarge)
             Row(Modifier.padding(top = 16.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf(8, 12, 16, 20, 24, 32).forEach { oz ->
-                    FilledTonalButton(onClick = { vm.addWater(day, oz.toDouble()); onDone() }, shape = CircleShape) {
-                        Text("$oz fl oz")
+                // Each preset is (fl oz to save, label): "8 fl oz" ... or "250 ml" ... "1.5 L".
+                Units.waterPresets(metric).forEach { (oz, label) ->
+                    FilledTonalButton(onClick = { vm.addWater(day, oz); onDone() }, shape = CircleShape) {
+                        Text(label)
                     }
                 }
             }
             Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
-                    custom, { custom = it }, Modifier.weight(1f), singleLine = true, suffix = { Text("fl oz") },
+                    custom, { custom = it }, Modifier.weight(1f), singleLine = true,
+                    suffix = { Text(if (!metric) "fl oz" else if (inLiters) "L" else "ml") },
                     label = { Text(stringResource(R.string.amount)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), shape = MaterialTheme.shapes.medium
                 )
                 Button(
-                    onClick = { custom.toNumberOrNull()?.takeIf { it > 0 }?.let { vm.addWater(day, it); onDone() } },
+                    onClick = { custom.toNumberOrNull()?.takeIf { it > 0 }?.let { vm.addWater(day, Units.flOzFrom(it, metric, inLiters)); onDone() } },
                     shape = CircleShape, modifier = Modifier.padding(start = 8.dp)
                 ) { Text(stringResource(R.string.add)) }
+            }
+            // Metric: choose whether the box above is in milliliters or liters (1 L = 1,000 ml).
+            if (metric) Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(!inLiters, { inLiters = false }, label = { Text("ml") }, shape = CircleShape)
+                FilterChip(inLiters, { inLiters = true }, label = { Text("L") }, shape = CircleShape)
             }
         }
     }
@@ -181,6 +196,7 @@ fun ExerciseSheet(vm: QuickAddViewModel, day: Long, onDone: () -> Unit) {
     var kcalText by remember { mutableStateOf("") }
     var kcalEdited by remember { mutableStateOf(false) }
     val lb = latest?.lb ?: 170.0
+    val metric = LocalMetric.current
     val mins = minutes.toNumberOrNull()?.toInt() ?: 0
     val estimate = activity.estimate(mins, lb)
     LaunchedEffect(estimate) { if (!kcalEdited) kcalText = estimate.toString() }
@@ -204,8 +220,8 @@ fun ExerciseSheet(vm: QuickAddViewModel, day: Long, onDone: () -> Unit) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), shape = MaterialTheme.shapes.medium)
             }
             Text(
-                if (latest != null) stringResource(R.string.burn_estimate, fmtNum(activity.met), fmtNum(lb))
-                else stringResource(R.string.burn_estimate_default, fmtNum(activity.met)),
+                if (latest != null) stringResource(R.string.burn_estimate, fmtNum(activity.met), Units.weight(lb, metric))
+                else stringResource(R.string.burn_estimate_default, fmtNum(activity.met), Units.weight(170.0, metric)),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
             )

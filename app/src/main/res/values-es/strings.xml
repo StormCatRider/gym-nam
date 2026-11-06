@@ -64,7 +64,7 @@
     <string name="fridge_soon">Tu refri, fechas de caducidad e ideas de recetas llegan en la etapa 3.</string>
     <string name="progress_soon">Tendencia de peso, historial y gráficas llegan en la etapa 4.</string>
 
-    <string name="settings_theme">Color del tema</string>
+    <string name="settings_theme">🎨  Apariencia</string>
     <string name="settings_targets">Metas diarias</string>
     <string name="settings_targets_hint">Ajusta los números del asistente si quieres. Guardar aquí los reemplaza.</string>
     <string name="settings_language">Idioma</string>
@@ -239,8 +239,8 @@
     <string name="restore_confirm_body">Todo en la app (registro, peso, agua, ejercicio, Mis alimentos, Mis comidas, refri, recetas) se reemplazará con el respaldo. Los ajustes y metas se quedan igual.</string>
     <string name="best_streak">Mejor racha: %1$d días</string>
     <string name="days_logged">días registrados</string>
-    <string name="burn_estimate">Estimado: %1$s MET × tus %2$s lb × tiempo. Edítalo si tu reloj dice otra cosa.</string>
-    <string name="burn_estimate_default">Estimado: %1$s MET × 170 lb × tiempo. Registra tu peso para un número más preciso.</string>
+    <string name="burn_estimate">Estimado: %1$s MET × tus %2$s × tiempo. Edítalo si tu reloj dice otra cosa.</string>
+    <string name="burn_estimate_default">Estimado: %1$s MET × %2$s × tiempo. Registra tu peso para un número más preciso.</string>
     <string name="burned_kcal">%1$d kcal quemadas</string>
     <string name="calories_burned">Calorías quemadas</string>
     <string name="calories_title">Calorías</string>
@@ -253,15 +253,15 @@
     <string name="history">Historial</string>
     <string name="log_weight">Registrar peso</string>
     <string name="weight">Peso</string>
-    <string name="last_weight">Último: %1$s lb el %2$s</string>
+    <string name="last_weight">Último: %1$s el %2$s</string>
     <string name="range_week">7 días</string>
     <string name="range_month">30 días</string>
     <string name="range_quarter">90 días</string>
     <string name="range_year">1 año</string>
     <string name="trend_explain">Puntos = pesajes diarios · línea = promedio de 7 días. El peso diario varía por agua y comida; la línea muestra la dirección real.</string>
     <string name="water">Agua</string>
-    <string name="water_avg">prom. %1$d / %2$d fl oz al día</string>
-    <string name="water_of_goal">%1$d / %2$d fl oz</string>
+    <string name="water_avg">prom. %1$s / %2$s al día</string>
+    <string name="water_of_goal">%1$s / %2$s</string>
     <string name="water_goal">Meta de agua</string>
     <string name="water_goal_hint">64 fl oz (8 vasos) es una meta diaria común; más si entrenas o hace calor.</string>
     <string name="weekly_avg_note">Las barras son promedios semanales de los días registrados.</string>
@@ -310,7 +310,7 @@
     <string name="goal_maintain">Mantener</string>
     <string name="goal_gain">Subir de peso</string>
     <string name="goals_title">Metas</string>
-    <string name="goals_summary">Basado en %1$s lb · %2$s · %3$s</string>
+    <string name="goals_summary">Basado en %1$s · %2$s · %3$s</string>
     <string name="recalculate_goals">Recalcular metas</string>
     <string name="hc_activity">Actividad del día · %1$s pasos</string>
     <string name="hc_body">Apagado por defecto. Lee pasos y calorías activas; escribe lo que comes y tu peso para que otras apps lo usen.</string>
@@ -338,7 +338,7 @@
     <string name="notif_log_body">Toma 30 segundos para agregar lo que comiste y que tu tendencia sea precisa. 🍽️</string>
     <string name="notif_week_title">Tu semana en Gym &amp; Ñam</string>
     <string name="notif_week_body">Registraste %1$d/7 días · prom. %2$d kcal (meta %3$d) · %4$d g de proteína.</string>
-    <string name="notif_week_weight">Peso: %1$s lb vs la semana pasada.</string>
+    <string name="notif_week_weight">Peso: %1$s vs la semana pasada.</string>
     <string name="per_day">al día</string>
     <string name="protein_per_lb">Proteína: %1$s g por lb de peso</string>
     <string name="protein_per_lb_note">0.7–1.0 g/lb funciona para la mayoría de quienes entrenan; más ayuda a conservar músculo al bajar grasa.</string>
@@ -352,11 +352,11 @@
     <string name="setup_formula_title">Fórmula y proteína</string>
     <string name="setup_result_title">Tu meta diaria</string>
     <string name="setup_incomplete">Regresa y llena tus datos.</string>
-    <string name="setup_disclaimer">Son estimaciones con fórmulas estándar, no consejo médico. Revisa tu tendencia de 7 días después de 2–3 semanas y ajusta; la app te sugerirá actualizar cuando tu tendencia cambie 5 lb.</string>
+    <string name="setup_disclaimer">Son estimaciones con fórmulas estándar, no consejo médico. Revisa tu tendencia de 7 días después de 2–3 semanas y ajusta; la app te sugerirá actualizar cuando tu tendencia cambie 5 lb (2.3 kg).</string>
     <string name="setup_theme_title">Elige tus colores</string>
     <string name="setup_theme_body">Puedes cambiarlo cuando quieras en Ajustes.</string>
     <string name="suggest_title">¿Actualizamos tus metas?</string>
-    <string name="suggest_body">Tu tendencia de 7 días es %1$s lb; tus metas usan %2$s lb. ¿Actualizar de %3$d a %4$d kcal?</string>
+    <string name="suggest_body">Tu tendencia de 7 días es %1$s; tus metas usan %2$s. ¿Actualizar de %3$d a %4$d kcal?</string>
     <string name="tour1_title">Registra en segundos</string>
     <string name="tour1_body">Toca + y busca entre más de 1,000 alimentos, escanea un código o repite una comida guardada. El anillo muestra lo que te queda.</string>
     <string name="tour2_title">Tu refri, tus recetas</string>
@@ -368,4 +368,24 @@
     <string name="credits_title">Acerca de y créditos</string>
     <string name="credits_body">• Datos de alimentos en línea: Open Food Facts (openfoodfacts.org), © colaboradores de Open Food Facts, bajo la Open Database License (ODbL).\n• Recetas en línea: TheMealDB (themealdb.com). La clave gratuita es para uso personal; publicar la app requiere su clave de supporter.\n• Valores de alimentos integrados: cifras de referencia nutricional estándar (estilo USDA FoodData Central). Datos, no texto copiado.\n• Estimaciones de ejercicio: valores MET del Compendium of Physical Activities.\n• Las recetas integradas, los textos y el ícono de la app son originales de Gym &amp; Ñam. Los íconos de comida son los emojis de tu teléfono.\n• Bibliotecas de código abierto: Kotlin, AndroidX/Jetpack (Compose, Room, CameraX, WorkManager, Glance, Biometric, Health Connect) y ZXing, bajo la Apache License 2.0.</string>
     <string name="off_attribution">Datos © colaboradores de Open Food Facts · ODbL</string>
+    <string name="rate_per_week_kg">Qué tan rápido (kg por semana)</string>
+    <string name="rate_note_lose_kg">0.25–0.5 kg por semana es sostenible para la mayoría. Más rápido es difícil de mantener y puede costar músculo.</string>
+    <string name="rate_note_gain_kg">Subir despacio (0.1–0.25 kg por semana) gana menos grasa.</string>
+    <string name="protein_per_kg">Proteína: %1$s g por kg de peso</string>
+    <string name="protein_per_kg_note">1.6–2.2 g/kg funciona para la mayoría de quienes entrenan; más ayuda a conservar músculo al bajar grasa.</string>
+    <string name="calc_units_metric">W = %1$s kg · H = %2$s cm</string>
+    <string name="calc_goal_metric">Meta: %1$s kg/semana (= %2$s lb) × 3,500 kcal por lb ÷ 7 días = %3$s kcal/día</string>
+    <string name="calc_protein_metric">Proteína = %1$s g/kg × %2$s kg = %3$d g</string>
+    <string name="setup_units_title">¿Qué unidades usas?</string>
+    <string name="setup_units_body">Para tu peso, estatura y agua. La comida siempre va en gramos o porciones.</string>
+    <string name="units_title">Unidades</string>
+    <string name="units_imperial">Imperial</string>
+    <string name="units_imperial_d">lb · ft/in · fl oz</string>
+    <string name="units_metric">Métrico</string>
+    <string name="units_metric_d">kg · cm · ml / L</string>
+    <string name="units_note">Puedes cambiarlo cuando quieras en Ajustes; tus datos no cambian.</string>
+    <string name="theme_system">📱 Teléfono</string>
+    <string name="theme_light">☀️ Claro</string>
+    <string name="theme_dark">🌙 Oscuro</string>
+    <string name="water_goal_hint_metric">Unos 2 L (8 vasos de 250 ml) es una meta diaria común; más si entrenas o hace calor.</string>
 </resources>

@@ -140,7 +140,7 @@ class WeeklySummaryWorker(ctx: Context, p: WorkerParameters) : CoroutineWorker(c
             Math.round((thisWeek.average() - lastWeek.average()) * 10) / 10.0 else null
         val text = buildString {
             append(app.getString(R.string.notif_week_body, days.size, avgKcal, s.targets.calories, avgProtein))
-            change?.let { append(" ").append(app.getString(R.string.notif_week_weight, (if (it > 0) "+" else "") + fmtNum(it))) }
+            change?.let { append(" ").append(app.getString(R.string.notif_week_weight, Units.weightChange(it, s.metric))) }
         }
         Reminders.notify(app, 2, app.getString(R.string.notif_week_title), text)
         return Result.success()

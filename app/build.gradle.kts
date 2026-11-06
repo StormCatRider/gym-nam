@@ -28,8 +28,8 @@ android {
         applicationId = "com.gymnam.app"
         minSdk = 29          // Android 10+
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.0.1"
+        versionCode = 7
+        versionName = "1.1.0"
     }
 
     buildTypes {
@@ -44,7 +44,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    // buildConfig = true lets the app read its own version name (shown at the bottom of Settings).
+    buildFeatures { compose = true; buildConfig = true }
 }
 
 ksp {

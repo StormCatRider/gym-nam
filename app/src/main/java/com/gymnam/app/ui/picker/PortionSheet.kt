@@ -9,7 +9,7 @@ package com.gymnam.app.ui.picker
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
+import com.gymnam.app.ui.theme.isAppDark
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,7 +84,7 @@ fun PortionSheet(
     val amount = amountText.toNumberOrNull()?.takeIf { it > 0 } ?: 0.0
     val f = item.factor(amount, inGrams)
     val kcal by animateIntAsState((item.kcal * f).roundToInt(), label = "kcal")
-    val macros = macroColors(isSystemInDarkTheme())
+    val macros = macroColors(isAppDark())
 
     // Switching units keeps the same quantity: 1 serving of 158 g <-> 158 g.
     fun switchUnit(toGrams: Boolean) {
