@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  Colors used outside the app screens: splash_bg = background while the app
+  opens; icon_bg / icon_fg = the launcher icon's background and drawing.
+  The in-app palettes live in ui/theme/Theme.kt.
+-->
+<resources>
+    <color name="splash_bg">#FFF8F5F2</color>
+    <color name="icon_bg">#FFB8E0D2</color>
+    <color name="icon_fg">#FF2F5D50</color>
+</resources>

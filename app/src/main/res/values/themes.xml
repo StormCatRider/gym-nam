@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  The base window style used before the app's own (Compose) theme takes over:
+  mostly the splash background color, so nothing flashes white at start.
+-->
+<resources>
+    <style name="Theme.GymNam" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/splash_bg</item>
+    </style>
+</resources>

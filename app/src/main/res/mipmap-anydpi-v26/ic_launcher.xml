@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  THE APP ICON ("adaptive icon", Android 8+). Three layers:
+   background = flat mint color (icon_bg in colors.xml)
+   foreground = the drawing (res/drawable/ic_launcher_fg.xml)
+   monochrome = one-color version used when the phone's "themed icons" is on
+  Each phone then cuts it into its own shape (circle, squircle, ...).
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/icon_bg" />
+    <foreground android:drawable="@drawable/ic_launcher_fg" />
+    <monochrome android:drawable="@drawable/ic_launcher_fg" />
+</adaptive-icon>

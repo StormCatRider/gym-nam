@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  QUÉ ES ESTE ARCHIVO: todos los textos en español. Cada nombre (name="...")
+  debe existir también en values/strings.xml (inglés). Si agregas un texto
+  nuevo, agrégalo en los dos archivos.
+-->
+<resources>
+    <string name="tab_today">Hoy</string>
+    <string name="tab_fridge">Refri</string>
+    <string name="tab_progress">Progreso</string>
+    <string name="tab_settings">Ajustes</string>
+    <string name="add">Agregar</string>
+
+    <string name="today">Hoy</string>
+    <string name="yesterday">Ayer</string>
+    <string name="kcal_left">kcal restantes</string>
+    <string name="kcal_over">kcal de más</string>
+    <string name="eaten_of_goal">%1$d de %2$d kcal</string>
+    <string name="protein">Proteína</string>
+    <string name="carbs">Carbohidratos</string>
+    <string name="fat">Grasa</string>
+    <string name="grams_of">%1$d / %2$d g</string>
+    <string name="meal_breakfast">Desayuno</string>
+    <string name="meal_lunch">Comida</string>
+    <string name="meal_dinner">Cena</string>
+    <string name="meal_snack">Botanas</string>
+    <string name="meal_empty">Nada todavía, toca + para agregar</string>
+    <string name="kcal_value">%1$d kcal</string>
+    <string name="prev_day">Día anterior</string>
+    <string name="next_day">Día siguiente</string>
+
+    <string name="add_what">¿Qué quieres agregar?</string>
+    <string name="add_food">Comida</string>
+    <string name="add_water">Agua</string>
+    <string name="add_exercise">Ejercicio</string>
+    <string name="add_weight">Peso</string>
+    <string name="add_fridge_item">Al refri</string>
+    <string name="coming_soon">Próximamente</string>
+
+    <string name="new_food">Agregar comida</string>
+    <string name="edit_food">Editar comida</string>
+    <string name="food_name">Nombre</string>
+    <string name="amount">Cantidad</string>
+    <string name="unit_gram">g</string>
+    <string name="unit_serving">porción</string>
+    <string name="unit_servings">porciones</string>
+    <string name="calories">Calorías (kcal)</string>
+    <string name="protein_g">Proteína (g)</string>
+    <string name="carbs_g">Carbohidratos (g)</string>
+    <string name="fat_g">Grasa (g)</string>
+    <string name="from_macros">≈ %1$d kcal según macros (4·P + 4·C + 9·G). Toca para usar.</string>
+    <string name="save">Guardar</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Atrás</string>
+    <string name="pick_icon">Ícono</string>
+    <string name="meal">Comida del día</string>
+    <string name="need_name_and_kcal">Agrega un nombre y calorías (o macros)</string>
+    <string name="delete_confirm">¿Eliminar “%1$s”?</string>
+    <string name="deleted">Eliminado</string>
+    <string name="undo">Deshacer</string>
+
+    <string name="fridge_soon">Tu refri, fechas de caducidad e ideas de recetas llegan en la etapa 3.</string>
+    <string name="progress_soon">Tendencia de peso, historial y gráficas llegan en la etapa 4.</string>
+
+    <string name="settings_theme">Color del tema</string>
+    <string name="settings_targets">Metas diarias</string>
+    <string name="settings_targets_hint">Ajusta los números del asistente si quieres. Guardar aquí los reemplaza.</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_hint">Sigue el idioma de tu teléfono. En Android 13+ puedes elegir English o Español solo para esta app en los ajustes del sistema.</string>
+    <string name="open_language_settings">Abrir ajustes de idioma</string>
+    <string name="saved">Guardado</string>
+    <string name="palette_mint">Menta</string>
+    <string name="palette_peach">Durazno</string>
+    <string name="palette_lavender">Lavanda</string>
+    <string name="palette_sky">Cielo</string>
+    <string name="palette_rose">Rosa</string>
+    <string name="privacy_title">Privacidad</string>
+    <string name="privacy_stage1">Tu registro vive solo en este teléfono. La cámara se usa solo al escanear, e internet solo si enciendes la búsqueda en línea.</string>
+
+    <!-- Stage 2 -->
+    <string name="search_foods">Buscar alimentos</string>
+    <string name="tab_all">Todo</string>
+    <string name="tab_mine">Mis alimentos</string>
+    <string name="tab_meals">Mis comidas</string>
+    <string name="tab_recent">Recientes</string>
+    <string name="scan_barcode">Escanear</string>
+    <string name="manual_entry">Manual</string>
+    <string name="badge_mine">Mío</string>
+    <string name="badge_online">En línea</string>
+    <string name="online_off_title">La búsqueda en línea está apagada</string>
+    <string name="online_off_body">Enciéndela para buscar en Open Food Facts y leer códigos de barras. Solo se envían tus palabras de búsqueda o el código.</string>
+    <string name="turn_on">Encender</string>
+    <string name="search_online">Buscar “%1$s” en Open Food Facts</string>
+    <string name="online_results">Open Food Facts</string>
+    <string name="online_none">Sin resultados en línea</string>
+    <string name="online_failed">No se pudo conectar con Open Food Facts. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="no_results">Sin resultados. Prueba otra palabra, busca en línea o agrégalo manualmente.</string>
+    <string name="empty_start">Busca entre más de 1,000 alimentos en español o inglés, o escanea un código de barras.</string>
+    <string name="empty_mine">Aún no hay nada guardado. Activa “Guardar en Mis alimentos” al agregar algo.</string>
+    <string name="empty_meals">Aún no hay comidas guardadas. En la pantalla Hoy, toca 🔖 en una comida para guardarla.</string>
+    <string name="empty_recent">Aquí aparecerán los alimentos que registres.</string>
+    <string name="barcode_looking">Buscando %1$s…</string>
+    <string name="barcode_offline">%1$s aún no está en Mis alimentos. Enciende internet para buscarlo o agrégalo manualmente (la próxima vez funcionará sin internet).</string>
+    <string name="barcode_notfound">No se encontró %1$s en línea. Agrégalo manualmente y quedará guardado para la próxima vez.</string>
+    <string name="add_manually">Agregar manualmente</string>
+    <string name="dismiss">Cerrar</string>
+    <string name="save_to_mine">Guardar en Mis alimentos</string>
+    <string name="save_to_mine_barcode">Guardar en Mis alimentos para escanearlo sin internet</string>
+    <string name="add_to_meal">Agregar a %1$s</string>
+    <string name="add_meal_items">Agregar %1$d alimentos</string>
+    <string name="items_kcal">%1$d alimentos · %2$d kcal</string>
+    <string name="save_meal">Guardar en Mis comidas</string>
+    <string name="meal_name">Nombre de la comida</string>
+    <string name="meal_saved">Guardado en Mis comidas</string>
+    <string name="camera_needed">Gym &amp; Ñam necesita la cámara para leer códigos de barras. Las imágenes se procesan en tu teléfono y nunca se guardan ni se envían.</string>
+    <string name="allow">Permitir</string>
+    <string name="point_camera">Apunta a un código de barras</string>
+    <string name="torch">Linterna</string>
+    <string name="settings_online_title">Búsqueda de alimentos en línea</string>
+    <string name="settings_online_body">Apagado (predeterminado): la app nunca se conecta a internet. Encendido: solo tus palabras de búsqueda o códigos escaneados van a Open Food Facts, una base de datos libre. Sin cuenta, sin rastreo.</string>
+    <string name="values_note">Los alimentos básicos usan valores de referencia estándar (USDA FoodData Central). Los platillos de restaurante y caseros son estimaciones típicas; las recetas varían. Escanea un código para los datos exactos de la etiqueta.</string>
+    <string name="step_down">Menos</string>
+    <string name="step_up">Más</string>
+    <string name="recent_header">Recientes</string>
+    <string name="mine_header">Mis alimentos</string>
+
+    <!-- Stage 3 -->
+    <string name="add_ingredient">Agregar ingrediente</string>
+    <string name="add_item">Agregar</string>
+    <string name="cook_and_log">Cocinar y registrar</string>
+    <string name="edit">Editar</string>
+    <string name="edit_fridge_item">Editar artículo</string>
+    <string name="edit_recipe">Editar receta</string>
+    <string name="new_fridge_item">Agregar al refri</string>
+    <string name="new_recipe">Nueva receta</string>
+    <string name="estimated_note">Estimado: %1$d de %2$d ingredientes coinciden con la lista de alimentos. Porciones supuestas: 4.</string>
+    <string name="expires">Caduca</string>
+    <string name="expires_today">hoy</string>
+    <string name="fits">cabe</string>
+    <string name="fridge_barcode_offline">Código guardado. Enciende la búsqueda en línea para llenar el nombre.</string>
+    <string name="fridge_barcode_unknown">No encontrado. Escribe el nombre.</string>
+    <string name="fridge_empty">Tu refri está vacío. Agrega lo que tienes para que Gym &amp; Ñam te sugiera recetas y te avise antes de que algo caduque.</string>
+    <string name="fridge_items">🧊 Refri</string>
+    <string name="recipes">🍳 Recetas</string>
+    <string name="group_expired">Caducado</string>
+    <string name="group_soon">Usar pronto</string>
+    <string name="group_later">Fresco</string>
+    <string name="group_no_date">Sin fecha</string>
+    <string name="in_fridge">En el refri: %1$s (%2$s)</string>
+    <string name="ingredients">Ingredientes</string>
+    <string name="logged">Registrado ✓</string>
+    <string name="macro_line">P %1$d g · C %2$d g · G %3$d g</string>
+    <string name="minutes">Minutos</string>
+    <string name="minutes_short">%1$d min</string>
+    <string name="servings">Porciones</string>
+    <string name="servings_count">%1$d porciones</string>
+    <string name="need_name_qty">Agrega un nombre y la cantidad</string>
+    <string name="need_recipe_name">Ponle nombre a tu receta</string>
+    <string name="no_date">Sin fecha</string>
+    <string name="pick_date">Elegir fecha</string>
+    <string name="plus_3_days">+3 días</string>
+    <string name="plus_1_week">+1 semana</string>
+    <string name="plus_2_weeks">+2 semanas</string>
+    <string name="plus_1_month">+1 mes</string>
+    <string name="no_ingredients">Agrega ingredientes para calcular las calorías automáticamente.</string>
+    <string name="nothing_to_take">Ningún ingrediente de esta receta está en tu refri.</string>
+    <string name="online_recipes">Más recetas en línea (TheMealDB)</string>
+    <string name="online_recipes_hint">ej. chicken, salmon, pasta (en inglés)</string>
+    <string name="online_recipes_note">Las recetas de TheMealDB están en inglés. Las calorías se estiman a partir de sus ingredientes.</string>
+    <string name="online_recipes_off_body">Enciende la búsqueda en línea para ver miles de recetas. Solo se envían tus palabras de búsqueda.</string>
+    <string name="per_serving">Por porción</string>
+    <string name="protein_short">%1$d g proteína</string>
+    <string name="quantity">Cantidad</string>
+    <string name="recipe_name">Nombre de la receta</string>
+    <string name="recipe_saved">Guardada en Mis recetas</string>
+    <string name="retry">Reintentar</string>
+    <string name="save_to_my_recipes">Guardar como mía</string>
+    <string name="servings_eaten">Porciones que comiste</string>
+    <string name="set_totals_myself">Poner los totales yo</string>
+    <string name="sort_have">Tengo más</string>
+    <string name="sort_expiring">Usa lo que caduca</string>
+    <string name="sort_fits">Cabe en %1$d kcal</string>
+    <string name="sort_protein">Alta en proteína</string>
+    <string name="sort_quick">Más rápida</string>
+    <string name="sort_light">Más ligera</string>
+    <string name="staple_hint">Mantén presionado un ingrediente para marcarlo como básico de despensa 🧂 (no contará como faltante).</string>
+    <string name="steps">Pasos</string>
+    <string name="steps_hint">Un paso por línea</string>
+    <string name="take_from_fridge">Sacar ingredientes del refri</string>
+    <string name="take_from_fridge_hint">Para toda la receta (%1$d porciones)</string>
+    <string name="unit_lb">lb</string>
+    <string name="unit_ml">ml</string>
+    <string name="unit_oz">oz</string>
+    <string name="unit_pack">paq</string>
+    <string name="unit_pcs">pzas</string>
+    <string name="used_up">se acaba</string>
+    <string name="uses_expiring">usa lo que caduca</string>
+    <plurals name="can_make_now">
+        <item quantity="one">Puedes preparar %d receta ahora mismo</item>
+        <item quantity="other">Puedes preparar %d recetas ahora mismo</item>
+    </plurals>
+    <plurals name="expired_days_ago">
+        <item quantity="one">caducó hace %d día</item>
+        <item quantity="other">caducó hace %d días</item>
+    </plurals>
+    <plurals name="expires_in_days">
+        <item quantity="one">en %d día</item>
+        <item quantity="other">en %d días</item>
+    </plurals>
+
+    <!-- Stage 4 -->
+    <string name="act_walk">Caminar</string>
+    <string name="act_run">Correr</string>
+    <string name="act_bike">Bici</string>
+    <string name="act_weights">Pesas</string>
+    <string name="act_hiit">HIIT</string>
+    <string name="act_swim">Nadar</string>
+    <string name="act_sports">Deportes</string>
+    <string name="act_yoga">Yoga</string>
+    <string name="act_other">Otro</string>
+    <string name="auto_backup">Respaldo automático semanal</string>
+    <string name="auto_backup_hint">Se guarda en Descargas/GymNam (conserva los últimos 4)</string>
+    <string name="last_backup">Último respaldo: %1$s</string>
+    <string name="backup_now">Respaldar ahora</string>
+    <string name="avg_per_day">Prom. / día</string>
+    <string name="avg_protein">Prom. proteína</string>
+    <string name="goal">Meta</string>
+    <string name="backup_title">Respaldo y restauración</string>
+    <string name="backup_body">Exportar crea un .zip con archivos CSV (registro de comidas, peso, agua, ejercicio, Mis alimentos, Mis comidas, refri, recetas). Se abre en Excel o Sheets. Restaurar reemplaza tus datos actuales con un respaldo.</string>
+    <string name="backup_exported">Respaldo exportado</string>
+    <string name="backup_failed">Falló el respaldo. Prueba otra ubicación u otro archivo.</string>
+    <string name="backup_restored">Restaurado (%1$d alimentos en tu registro)</string>
+    <string name="backup_saved_downloads">Respaldo guardado en Descargas/GymNam</string>
+    <string name="export">Exportar</string>
+    <string name="restore">Restaurar</string>
+    <string name="restore_confirm_title">¿Restaurar este respaldo?</string>
+    <string name="restore_confirm_body">Todo en la app (registro, peso, agua, ejercicio, Mis alimentos, Mis comidas, refri, recetas) se reemplazará con el respaldo. Los ajustes y metas se quedan igual.</string>
+    <string name="best_streak">Mejor racha: %1$d días</string>
+    <string name="days_logged">días registrados</string>
+    <string name="burn_estimate">Estimado: %1$s MET × tus %2$s lb × tiempo. Edítalo si tu reloj dice otra cosa.</string>
+    <string name="burn_estimate_default">Estimado: %1$s MET × 170 lb × tiempo. Registra tu peso para un número más preciso.</string>
+    <string name="burned_kcal">%1$d kcal quemadas</string>
+    <string name="calories_burned">Calorías quemadas</string>
+    <string name="calories_title">Calorías</string>
+    <string name="change">Cambio</string>
+    <string name="latest">Último</string>
+    <string name="trend_7d">Tendencia 7 días</string>
+    <string name="eaten_of_goal_burned">%1$d de %2$d kcal (+%3$d por ejercicio)</string>
+    <string name="exercise">Ejercicio</string>
+    <string name="exercise_empty">Toca + para registrar un entrenamiento. Las calorías quemadas se suman a tu presupuesto de hoy.</string>
+    <string name="history">Historial</string>
+    <string name="log_weight">Registrar peso</string>
+    <string name="weight">Peso</string>
+    <string name="last_weight">Último: %1$s lb el %2$s</string>
+    <string name="range_week">7 días</string>
+    <string name="range_month">30 días</string>
+    <string name="range_quarter">90 días</string>
+    <string name="range_year">1 año</string>
+    <string name="trend_explain">Puntos = pesajes diarios · línea = promedio de 7 días. El peso diario varía por agua y comida; la línea muestra la dirección real.</string>
+    <string name="water">Agua</string>
+    <string name="water_avg">prom. %1$d / %2$d fl oz al día</string>
+    <string name="water_of_goal">%1$d / %2$d fl oz</string>
+    <string name="water_goal">Meta de agua</string>
+    <string name="water_goal_hint">64 fl oz (8 vasos) es una meta diaria común; más si entrenas o hace calor.</string>
+    <string name="weekly_avg_note">Las barras son promedios semanales de los días registrados.</string>
+    <string name="weight_empty">Registra tu peso para ver tu tendencia. Pésate en la mañana, después del baño y antes de comer.</string>
+    <string name="weight_tip">Pesarte a la misma hora da la tendencia más limpia. Si registras otra vez hoy, se reemplaza el peso de hoy.</string>
+    <string name="widget_title">Widget de inicio</string>
+    <string name="widget_show_weight">Mostrar mi peso en el widget</string>
+    <string name="widget_hint">Apagado por defecto para que tu peso no se vea en la pantalla de inicio. Agrega el widget manteniendo presionada la pantalla de inicio → Widgets → Gym &amp; Ñam.</string>
+    <string name="widget_description">Calorías restantes, macros y agua</string>
+    <plurals name="streak_days">
+        <item quantity="one">racha de %d día</item>
+        <item quantity="other">racha de %d días</item>
+    </plurals>
+
+    <!-- Stage 5 -->
+    <string name="act_sedentary">Sedentario</string>
+    <string name="act_sedentary_d">Trabajo de escritorio, poco ejercicio</string>
+    <string name="act_light">Ligeramente activo</string>
+    <string name="act_light_d">Ejercicio ligero 1–3 días a la semana</string>
+    <string name="act_moderate">Moderadamente activo</string>
+    <string name="act_moderate_d">Ejercicio 3–5 días a la semana</string>
+    <string name="act_active">Muy activo</string>
+    <string name="act_active_d">Ejercicio intenso 6–7 días a la semana</string>
+    <string name="act_very_active">Extremadamente activo</string>
+    <string name="act_very_active_d">Trabajo físico más entrenamiento intenso</string>
+    <string name="age">Edad</string>
+    <string name="years">años</string>
+    <string name="height">Estatura</string>
+    <string name="body_fat">Grasa corporal</string>
+    <string name="sex_male">Hombre</string>
+    <string name="sex_female">Mujer</string>
+    <string name="sex_note">Solo lo usa la fórmula (estima el metabolismo de forma distinta).</string>
+    <string name="calc_units">W = %1$s lb ÷ 2.2046 = %2$s kg · H = %3$s in × 2.54 = %4$s cm</string>
+    <string name="calc_mifflin">TMB (Mifflin-St Jeor) = 10 × %1$s + 6.25 × %2$s − 5 × %3$d %4$s = %5$s kcal</string>
+    <string name="calc_lbm">Masa magra = %1$s kg × (1 − %2$s%%) = %3$s kg</string>
+    <string name="calc_katch">TMB (Katch-McArdle) = 370 + 21.6 × %1$s = %2$s kcal</string>
+    <string name="calc_tdee">GET = %1$s × %2$s (actividad) = %3$s kcal</string>
+    <string name="calc_goal">Meta: %1$s lb/semana × 3,500 kcal ÷ 7 días = %2$s kcal/día</string>
+    <string name="calc_floor">Se subió al mínimo seguro de %1$s kcal al día.</string>
+    <string name="calc_protein">Proteína = %1$s g/lb × %2$s lb = %3$d g</string>
+    <string name="calc_fat">Grasa = 25%% de las calorías ÷ 9 (mínimo 0.3 g/lb) = %1$d g</string>
+    <string name="calc_carbs">Carbohidratos = calorías restantes ÷ 4 = %1$d g</string>
+    <string name="formula_mifflin_d">La mejor para la mayoría. Usa peso, estatura, edad y sexo.</string>
+    <string name="formula_katch_d" formatted="false">Usa la masa magra, así que necesitas tu % de grasa. Más precisa si entrenas pesas y la conoces.</string>
+    <string name="goal_lose">Bajar de peso</string>
+    <string name="goal_maintain">Mantener</string>
+    <string name="goal_gain">Subir de peso</string>
+    <string name="goals_title">Metas</string>
+    <string name="goals_summary">Basado en %1$s lb · %2$s · %3$s</string>
+    <string name="recalculate_goals">Recalcular metas</string>
+    <string name="hc_activity">Actividad del día · %1$s pasos</string>
+    <string name="hc_body">Apagado por defecto. Lee pasos y calorías activas; escribe lo que comes y tu peso para que otras apps lo usen.</string>
+    <string name="hc_denied">Health Connect sigue apagado: no se permitieron todos los permisos.</string>
+    <string name="hc_unavailable">Health Connect no está disponible en este teléfono. Instálalo o actualízalo desde Play Store.</string>
+    <string name="hc_manage">Administrar permisos de Health Connect</string>
+    <string name="hc_double_note">Tip: si tu reloj ya cuenta un entrenamiento en las calorías activas, no lo registres también a mano o contará doble.</string>
+    <string name="how_calculated">Cómo lo calculamos</string>
+    <string name="lock_title">Bloqueo de la app</string>
+    <string name="lock_body">Pide huella, rostro o el PIN de tu teléfono al abrir la app.</string>
+    <string name="lock_unavailable">Primero configura un bloqueo de pantalla o huella en tu teléfono.</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="unlock_title">Desbloquear Gym &amp; Ñam</string>
+    <string name="reminders_title">Recordatorios</string>
+    <string name="log_reminder">Recordatorio de registro</string>
+    <string name="log_reminder_hint">Solo si no has registrado nada ese día</string>
+    <string name="weekly_summary">Resumen semanal</string>
+    <string name="weekly_summary_hint">Domingo en la tarde: tus promedios y cambio de peso</string>
+    <string name="next">Siguiente</string>
+    <string name="start">Empezar</string>
+    <string name="not_now">Ahora no</string>
+    <string name="update_goals">Actualizar metas</string>
+    <string name="notif_channel">Recordatorios</string>
+    <string name="notif_log_title">Nada registrado hoy</string>
+    <string name="notif_log_body">Toma 30 segundos para agregar lo que comiste y que tu tendencia sea precisa. 🍽️</string>
+    <string name="notif_week_title">Tu semana en Gym &amp; Ñam</string>
+    <string name="notif_week_body">Registraste %1$d/7 días · prom. %2$d kcal (meta %3$d) · %4$d g de proteína.</string>
+    <string name="notif_week_weight">Peso: %1$s lb vs la semana pasada.</string>
+    <string name="per_day">al día</string>
+    <string name="protein_per_lb">Proteína: %1$s g por lb de peso</string>
+    <string name="protein_per_lb_note">0.7–1.0 g/lb funciona para la mayoría de quienes entrenan; más ayuda a conservar músculo al bajar grasa.</string>
+    <string name="rate_per_week">Qué tan rápido (lb por semana)</string>
+    <string name="rate_note_lose">0.5–1 lb por semana es sostenible para la mayoría. Más rápido es difícil de mantener y puede costar músculo.</string>
+    <string name="rate_note_gain">Subir despacio (0.25–0.5 lb por semana) gana menos grasa.</string>
+    <string name="setup_about_title">Sobre ti</string>
+    <string name="setup_about_body">Solo se usa para calcular tu meta diaria. Se queda en este teléfono.</string>
+    <string name="setup_activity_title">¿Qué tan activo eres?</string>
+    <string name="setup_goal_title">¿Cuál es tu meta?</string>
+    <string name="setup_formula_title">Fórmula y proteína</string>
+    <string name="setup_result_title">Tu meta diaria</string>
+    <string name="setup_incomplete">Regresa y llena tus datos.</string>
+    <string name="setup_disclaimer">Son estimaciones con fórmulas estándar, no consejo médico. Revisa tu tendencia de 7 días después de 2–3 semanas y ajusta; la app te sugerirá actualizar cuando tu tendencia cambie 5 lb.</string>
+    <string name="setup_theme_title">Elige tus colores</string>
+    <string name="setup_theme_body">Puedes cambiarlo cuando quieras en Ajustes.</string>
+    <string name="suggest_title">¿Actualizamos tus metas?</string>
+    <string name="suggest_body">Tu tendencia de 7 días es %1$s lb; tus metas usan %2$s lb. ¿Actualizar de %3$d a %4$d kcal?</string>
+    <string name="tour1_title">Registra en segundos</string>
+    <string name="tour1_body">Toca + y busca entre más de 1,000 alimentos, escanea un código o repite una comida guardada. El anillo muestra lo que te queda.</string>
+    <string name="tour2_title">Tu refri, tus recetas</string>
+    <string name="tour2_body">Lleva el control de tu refri y de lo que caduca. Recibe recetas que puedes preparar ya y que caben en tus calorías.</string>
+    <string name="tour3_title">Privada por defecto</string>
+    <string name="tour3_body">Todo se queda en tu teléfono. Internet, Health Connect, recordatorios y el bloqueo están apagados hasta que tú los enciendas.</string>
+
+    <!-- Credits -->
+    <string name="credits_title">Acerca de y créditos</string>
+    <string name="credits_body">• Datos de alimentos en línea: Open Food Facts (openfoodfacts.org), © colaboradores de Open Food Facts, bajo la Open Database License (ODbL).\n• Recetas en línea: TheMealDB (themealdb.com). La clave gratuita es para uso personal; publicar la app requiere su clave de supporter.\n• Valores de alimentos integrados: cifras de referencia nutricional estándar (estilo USDA FoodData Central). Datos, no texto copiado.\n• Estimaciones de ejercicio: valores MET del Compendium of Physical Activities.\n• Las recetas integradas, los textos y el ícono de la app son originales de Gym &amp; Ñam. Los íconos de comida son los emojis de tu teléfono.\n• Bibliotecas de código abierto: Kotlin, AndroidX/Jetpack (Compose, Room, CameraX, WorkManager, Glance, Biometric, Health Connect) y ZXing, bajo la Apache License 2.0.</string>
+    <string name="off_attribution">Datos © colaboradores de Open Food Facts · ODbL</string>
+</resources>

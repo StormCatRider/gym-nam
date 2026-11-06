@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  THE ICON DRAWING, as a vector (made of math shapes, so it's sharp at any size).
+  The canvas is 108 x 108 units; only the middle 66 x 66 is always visible.
+  pathData uses SVG commands: M = move to, L = line to, C = curve,
+  A = arc (part of a circle), Z = close the shape.
+  Also used as the small notification icon (see data/Reminders.kt).
+-->
+<!-- Simple ring + leaf mark: a calorie ring with a leaf inside -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="@color/icon_fg" android:strokeWidth="6"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M54,32 A22,22 0 1,1 32.1,52" />
+    <path android:fillColor="@color/icon_fg"
+        android:pathData="M54,44 C64,44 66,54 62,62 C54,62 46,58 46,50 C46,47 49,44 54,44 Z" />
+</vector>

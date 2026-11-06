@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLAIN-ENGLISH GUIDE
+  Home-screen widget settings: its minimum size, that it can be resized, how
+  often Android refreshes it on its own (1,800,000 ms = 30 minutes), and its
+  description in the widget list.
+-->
+<!-- 2×1 to 4×2 cells. Refreshes every 30 min (also instantly when you log something). -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="80dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:description="@string/widget_description"
+    android:widgetCategory="home_screen" />
