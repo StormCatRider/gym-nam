@@ -1,0 +1,73 @@
+# ==============================================================================
+# PLAIN-ENGLISH GUIDE
+# Every time code is pushed to "main", GitHub builds the app on its own servers.
+#  - If the build works: the installable app (app-debug.apk) appears under
+#    the "Actions" tab -> the latest run -> "Artifacts" (keep 14 days).
+#  - Either way: the full build log is saved to the "ci-logs" branch
+#    (build.log + errors.txt), so Claude can read it and fix problems.
+# You can also start a build by hand: Actions tab -> "Build APK" -> "Run workflow".
+# ==============================================================================
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed only to save the log to the ci-logs branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # GitHub's machines already have the Android SDK; add Android 16 (API 36).
+      - name: Install Android 16 SDK platform
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;35.0.0" > /dev/null
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Build debug APK
+        id: build
+        run: |
+          set +e
+          gradle assembleDebug --no-daemon --console=plain 2>&1 | tee build.log
+          code=${PIPESTATUS[0]}
+          grep -E '^(e: |w: .*Deprecated|\* What went wrong|FAILURE|BUILD )' -A3 build.log > errors.txt || true
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          exit $code
+
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GymNam-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+      - name: Save log to ci-logs branch
+        if: always()
+        run: |
+          mkdir -p /tmp/logs && cp build.log errors.txt /tmp/logs/ 2>/dev/null || true
+          echo "${GITHUB_SHA} result=${{ steps.build.outputs.code }}" > /tmp/logs/commit.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git fetch origin ci-logs || true
+          git switch --orphan ci-logs-new
+          git rm -rf --quiet . || true
+          cp /tmp/logs/* .
+          git add build.log errors.txt commit.txt
+          git commit -qm "Build log for ${GITHUB_SHA}"
+          git push -f origin HEAD:ci-logs
