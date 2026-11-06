@@ -74,6 +74,10 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$camerax")
     implementation("androidx.camera:camera-view:$camerax")
     implementation("com.google.zxing:core:3.5.3")
+    // CameraX and Glance hand back a "ListenableFuture" (a value that arrives later).
+    // That class comes from Google's Guava library, which must be listed here so the
+    // compiler can see it. ("-android" = the Android-sized version of Guava.)
+    implementation("com.google.guava:guava:33.3.1-android")
 
     // Home-screen widget (Jetpack Glance) and weekly auto-backup (WorkManager)
     implementation("androidx.glance:glance-appwidget:1.1.1")
