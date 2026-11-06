@@ -112,12 +112,14 @@ class OpenFoodFacts(private val settings: SettingsStore) {
             fatG = g("fat_100g") * k,
             source = FoodSource.ONLINE,
             barcode = code ?: p.optString("code").takeIf { it.isNotBlank() },
-            brand = brand
+            brand = brand,
+            // The product's declared allergens (from its label), used for ⚠️ warnings.
+            allergenTags = p.optJSONArray("allergens_tags")?.let { arr -> (0 until arr.length()).map { arr.optString(it) } }.orEmpty()
         )
     }
 
     private companion object {
         // Only ask for the columns we actually use (smaller, faster download).
-        const val FIELDS = "code,product_name,product_name_en,product_name_es,brands,nutriments,serving_quantity,serving_size"
+        const val FIELDS = "code,product_name,product_name_en,product_name_es,brands,nutriments,serving_quantity,serving_size,allergens_tags"
     }
 }

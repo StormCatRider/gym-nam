@@ -28,6 +28,8 @@ import com.gymnam.app.ui.picker.PickerViewModel
 import com.gymnam.app.ui.progress.ProgressViewModel
 import com.gymnam.app.ui.quick.QuickAddViewModel
 import com.gymnam.app.ui.settings.SettingsViewModel
+import com.gymnam.app.ui.me.MeViewModel
+import com.gymnam.app.ui.calendar.CalendarViewModel
 import com.gymnam.app.ui.today.TodayViewModel
 
 // Small helper: "get me the app's toolbox (GymNamApp)".
@@ -38,13 +40,15 @@ private fun CreationExtras.app(): GymNamApp =
 val AppViewModelFactory = viewModelFactory {
     // One line per ViewModel. createSavedStateHandle() = the screen's arguments
     // (e.g. WHICH food to edit), passed from the navigation.
-    initializer { TodayViewModel(app().db.foodDao(), app().db.savedDao(), app().db.trackingDao(), app().settings) }
+    initializer { TodayViewModel(app().db.foodDao(), app().db.savedDao(), app().db.trackingDao(), app().settings, app().db.moodDao()) }
     initializer { FoodEditorViewModel(createSavedStateHandle(), app().db.foodDao(), app().db.savedDao()) }
     initializer {
         PickerViewModel(createSavedStateHandle(), app().db.foodDao(), app().db.savedDao(),
             app().catalog, app().off, app().settings)
     }
     initializer { SettingsViewModel(app()) }
+    initializer { MeViewModel(app()) }
+    initializer { CalendarViewModel(app().db.foodDao(), app().db.trackingDao(), app().db.moodDao(), app().settings) }
     initializer { ProgressViewModel(app().db.foodDao(), app().db.trackingDao(), app().settings) }
     initializer { QuickAddViewModel(app().db.trackingDao()) }
     initializer {

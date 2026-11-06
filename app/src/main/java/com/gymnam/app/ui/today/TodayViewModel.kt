@@ -19,6 +19,8 @@ import androidx.lifecycle.viewModelScope
 import com.gymnam.app.data.AppSettings
 import com.gymnam.app.data.ExerciseEntry
 import com.gymnam.app.data.FoodDao
+import com.gymnam.app.data.MoodDao
+import com.gymnam.app.data.MoodEntry
 import com.gymnam.app.data.FoodEntry
 import com.gymnam.app.data.GoalCalculator
 import com.gymnam.app.data.Profile
@@ -96,7 +98,8 @@ class TodayViewModel(
     private val dao: FoodDao,
     private val savedDao: SavedDao,
     private val tracking: TrackingDao,
-    private val settings: SettingsStore
+    private val settings: SettingsStore,
+    private val moodDao: MoodDao
 ) : ViewModel() {
 
     // The day being viewed (you can go back to past days with the arrows).
@@ -135,6 +138,35 @@ class TodayViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     // Live streak, recalculated whenever a day gets its first or last food.
+    // ---------- Mood log ("How do you feel?") ----------
+
+    /** The viewed day's mood check-ins (live). */
+    val moods: StateFlow<List<MoodEntry>> = _day.flatMapLatest { moodDao.forDay(it.toEpochDay()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /**
+     * Foods you can mark as "this made me feel bad": the viewed day's foods (newest first),
+     * then the day before's (a reaction can show up hours later). No repeats.
+     */
+    val suspectChoices: StateFlow<List<String>> = _day.flatMapLatest { d ->
+        val e = d.toEpochDay()
+        combine(dao.entriesForDay(e), dao.entriesForDay(e - 1)) { today, before ->
+            (today.sortedByDescending { it.createdAt } + before.sortedByDescending { it.createdAt })
+                .map { it.name }.distinct()
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Saves a check-in on the day being viewed (time = now). */
+    fun addMood(mood: Int, symptoms: List<String>, foods: List<String>, note: String) = viewModelScope.launch {
+        moodDao.insert(MoodEntry(
+            epochDay = _day.value.toEpochDay(), mood = mood, symptoms = symptoms.joinToString(","),
+            foods = foods.joinToString("\n"), note = note.trim()
+        ))
+    }
+
+    fun deleteMood(m: MoodEntry) = viewModelScope.launch { moodDao.delete(m) }
+    fun restoreMood(m: MoodEntry) = viewModelScope.launch { moodDao.insert(m) }
+
     val streak: StateFlow<Streak> = dao.loggedDays().map { streaks(it, LocalDate.now().toEpochDay()) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), Streak())
 

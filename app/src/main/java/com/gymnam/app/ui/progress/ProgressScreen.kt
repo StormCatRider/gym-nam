@@ -78,8 +78,8 @@ fun ProgressScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item {
-            Text(stringResource(R.string.tab_progress), style = MaterialTheme.typography.headlineMedium)
-            Row(Modifier.padding(top = 10.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            // (The page title "Progress" now lives in the colored top bar.)
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Range.entries.forEach { r ->
                     FilterChip(range == r, { vm.range.value = r }, shape = CircleShape, label = {
                         Text(stringResource(when (r) {

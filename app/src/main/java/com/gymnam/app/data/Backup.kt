@@ -39,7 +39,7 @@ import java.util.zip.ZipOutputStream
 
 /**
  * Backup = one .zip with a plain CSV per table (opens in Excel / Google Sheets):
- *   food_log.csv, weight.csv, water.csv, exercise.csv, my_foods.csv, my_meals.csv, fridge.csv, recipes.csv
+ *   food_log.csv, weight.csv, water.csv, exercise.csv, mood.csv, my_foods.csv, my_meals.csv, fridge.csv, recipes.csv
  * Restore replaces everything with the backup's contents, in one transaction (all or nothing).
  * Settings and goals are not included.
  */
@@ -71,6 +71,10 @@ object Backup {
                 t.allWater().map { listOf(it.id, LocalDate.ofEpochDay(it.epochDay), it.flOz, it.createdAt) })
             put("exercise.csv", listOf("id", "date", "name", "emoji", "minutes", "kcal", "source", "created"),
                 t.allExercise().map { listOf(it.id, LocalDate.ofEpochDay(it.epochDay), it.name, it.emoji, it.minutes, it.kcal, it.source, it.createdAt) })
+            // mood.csv (app 1.1): symptoms are ids like "nausea,bloating"; foods are separated by " | ".
+            put("mood.csv", listOf("id", "date", "mood", "symptoms", "foods", "note", "created"),
+                app.db.moodDao().all().map { listOf(it.id, LocalDate.ofEpochDay(it.epochDay), it.mood, it.symptoms,
+                    it.foodList.joinToString(" | "), it.note, it.createdAt) })
             put("my_foods.csv", listOf("id", "name", "emoji", "serving", "serving_g", "kcal", "protein_g", "carbs_g", "fat_g", "barcode", "created"),
                 s.foodsNow().map { listOf(it.id, it.name, it.emoji, it.servingName, it.servingG, it.kcal, it.proteinG, it.carbsG, it.fatG, it.barcode, it.createdAt) })
             put("my_meals.csv", listOf("id", "name", "emoji", "items_json", "created"),
@@ -122,6 +126,12 @@ object Backup {
             ExerciseEntry(m.l("id"), m.day("date") ?: return@mapNotNull null, m.s("name"), m.s("emoji"), m.i("minutes"), m.i("kcal"),
                 m.s("source").ifBlank { "manual" }, m.l("created"))
         }
+        // Older backups have no mood.csv: then your current mood log is left as it is.
+        val hasMood = "mood.csv" in tables
+        val moods = rows("mood.csv").mapNotNull { m ->
+            MoodEntry(m.l("id"), m.day("date") ?: return@mapNotNull null, m.l("created"), m.i("mood").coerceIn(1, 5),
+                m.s("symptoms"), m.s("foods").split(" | ").map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\n"), m.s("note"))
+        }
         val foods = rows("my_foods.csv").map { m ->
             SavedFood(m.l("id"), m.s("name"), m.s("emoji"), m.s("serving"), m.d("serving_g"), m.d("kcal"), m.d("protein_g"),
                 m.d("carbs_g"), m.d("fat_g"), m.s("barcode").ifBlank { null }, m.l("created"))
@@ -145,6 +155,7 @@ object Backup {
             f.clear(); t.clearWeights(); t.clearWater(); t.clearExercise(); s.clearFoods(); s.clearMeals(); fr.clear(); r.clear()
             f.insertAll(food); t.insertWeights(weights); t.insertWaters(water); t.insertExercises(exercise)
             s.insertFoods(foods); s.insertMeals(meals); fr.insertAll(fridge); r.insertAll(recipes)
+            if (hasMood) { db.moodDao().clear(); db.moodDao().insertAll(moods) }
         }
         food.size
     }

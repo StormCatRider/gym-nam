@@ -32,7 +32,9 @@ data class FoodItem(
     val source: FoodSource,
     val savedId: Long? = null,
     val barcode: String? = null,
-    val brand: String? = null
+    val brand: String? = null,
+    /** Online products only: the allergens Open Food Facts lists, e.g. ["en:milk", "en:gluten"]. */
+    val allergenTags: List<String> = emptyList()
 ) {
     // True when we know how many grams one serving weighs (so you can log in grams).
     val hasGrams get() = servingG > 0

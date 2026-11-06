@@ -1,7 +1,8 @@
 # ==============================================================================
 # PLAIN-ENGLISH GUIDE
 # Every time code is pushed to "main", GitHub builds the app on its own servers.
-#  - If the build works: the installable app (app-debug.apk) appears under
+#  - If the build works: the installable apps (app-release.apk = fast version,
+#    app-debug.apk = developer version) appear under
 #    the "Actions" tab -> the latest run -> "Artifacts" (keep 14 days).
 #  - Either way: the full build log is saved to the "ci-logs" branch
 #    (build.log + errors.txt), so Claude can read it and fix problems.
@@ -39,22 +40,26 @@ jobs:
         with:
           gradle-version: "8.11.1"
 
-      - name: Build debug APK
+      - name: Build debug + release APKs
         id: build
         run: |
           set +e
-          gradle assembleDebug --no-daemon --console=plain 2>&1 | tee build.log
+          gradle assembleDebug assembleRelease --no-daemon --console=plain 2>&1 | tee build.log
           code=${PIPESTATUS[0]}
-          grep -E '^(e: |w: .*Deprecated|\* What went wrong|FAILURE|BUILD )' -A3 build.log > errors.txt || true
+          grep -E '^(e: |ERROR|\* What went wrong|FAILURE|BUILD )|Missing class' -A3 build.log > errors.txt || true
+          # R8 writes suggested rules here when classes are missing in the release build.
+          cat app/build/outputs/mapping/release/missing_rules.txt >> errors.txt 2>/dev/null || true
           echo "code=$code" >> "$GITHUB_OUTPUT"
           exit $code
 
-      - name: Upload APK
+      - name: Upload APKs
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: GymNam-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: GymNam-apks
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/release/app-release.apk
           retention-days: 14
 
       - name: Save log to ci-logs branch

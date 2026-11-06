@@ -83,6 +83,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gymnam.app.R
+import com.gymnam.app.ui.calendar.CalendarScreen
+import com.gymnam.app.ui.me.MeScreen
+import com.gymnam.app.ui.theme.isAppDark
+import androidx.core.view.WindowCompat
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.SideEffect
 import com.gymnam.app.data.Meal
 import com.gymnam.app.ui.AppViewModelFactory
 import com.gymnam.app.ui.add.FoodEditorScreen
@@ -129,6 +136,8 @@ private object Routes {
     fun recipe(key: String) = "recipe?key=${android.net.Uri.encode(key)}"
     const val RECIPE_EDIT = "recipeEdit?id={id}"
     const val SETUP = "setup"
+    const val ME = "me"
+    const val CALENDAR = "calendar"
     fun recipeEdit(id: Long = -1) = "recipeEdit?id=$id"
 }
 
@@ -163,6 +172,23 @@ fun MainScaffold() {
     val haptics = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val loggedMsg = stringResource(R.string.logged)
+    // For the top bar: your name, photo version and streak.
+    val app = LocalContext.current.applicationContext as com.gymnam.app.GymNamApp
+    val appSettings by remember { app.settings.settings }.collectAsStateWithLifecycle(initialValue = null)
+    val streak by todayVm.streak.collectAsStateWithLifecycle()
+
+    // Status-bar icons (clock, battery): dark icons on our light pastel bars, otherwise
+    // light icons in dark mode and dark icons in light mode, so they're always readable.
+    val coloredTop = showBar || route == Routes.ME || route == Routes.CALENDAR
+    val dark = isAppDark()
+    val view = LocalView.current
+    if (!view.isInEditMode) SideEffect {
+        val window = (view.context as? android.app.Activity)?.window ?: return@SideEffect
+        WindowCompat.getInsetsController(window, view).apply {
+            isAppearanceLightStatusBars = coloredTop || !dark
+            isAppearanceLightNavigationBars = !dark
+        }
+    }
 
     // Opens the food picker for the day currently shown on Today.
     fun openFood(meal: Meal) {
@@ -174,6 +200,25 @@ fun MainScaffold() {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         containerColor = MaterialTheme.colorScheme.background,
+        // The colored top bar, only on the 4 main tabs (inner pages have their own header).
+        topBar = {
+            if (showBar) {
+                val title = when (route) {
+                    Routes.FRIDGE -> stringResource(R.string.tab_fridge)
+                    Routes.PROGRESS -> stringResource(R.string.tab_progress)
+                    Routes.SETTINGS -> stringResource(R.string.tab_settings)
+                    else -> stringResource(R.string.app_name)
+                }
+                val name = appSettings?.userName.orEmpty()
+                AppTopBar(
+                    title = title,
+                    subtitle = if (route == Routes.TODAY && name.isNotBlank()) stringResource(R.string.hi_name, name) else null,
+                    streak = if (route == Routes.TODAY) streak.current else 0,
+                    photoVersion = appSettings?.photoVersion ?: 0L,
+                    onAvatar = { haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove); nav.navigate(Routes.ME) }
+                )
+            }
+        },
         bottomBar = {
             // The bottom bar slides down/out when you open an inner screen, and back up when you return.
             AnimatedVisibility(
@@ -208,8 +253,19 @@ fun MainScaffold() {
                     vm = todayVm, snackbar = snackbar, contentPadding = inner,
                     onAddToMeal = { openFood(it) },
                     onEdit = { e -> nav.navigate(Routes.food(id = e.id, day = e.epochDay, meal = e.meal)) },
-                    onAddExercise = { quick = "exercise" }
+                    onAddExercise = { quick = "exercise" },
+                    onOpenCalendar = { nav.navigate(Routes.CALENDAR) }
                 )
+            }
+            // Me page (tap your photo/logo). "Edit" opens the goal setup.
+            composable(Routes.ME) {
+                MeScreen(viewModel(factory = AppViewModelFactory), snackbar, inner,
+                    onBack = { nav.popBackStack() }, onEditBody = { nav.navigate(Routes.SETUP) })
+            }
+            // Calendar: tap a day to see it; "Open this day" shows it on Today.
+            composable(Routes.CALENDAR) {
+                CalendarScreen(viewModel(factory = AppViewModelFactory), inner, onBack = { nav.popBackStack() },
+                    onOpenDay = { date -> todayVm.goTo(date); nav.switchTab(Routes.TODAY) })
             }
             // Fridge tab, with its buttons wired to the right screens.
             composable(Routes.FRIDGE) {

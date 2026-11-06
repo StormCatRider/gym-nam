@@ -49,6 +49,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gymnam.app.data.AppSettings
+import com.gymnam.app.data.DietPrefs
+import com.gymnam.app.data.LocalDiet
 import com.gymnam.app.data.LocalMetric
 import com.gymnam.app.ui.nav.MainScaffold
 import com.gymnam.app.ui.setup.SetupScreen
@@ -83,7 +85,11 @@ class MainActivity : FragmentActivity() {
             // themeMode = Light / Dark / follow phone (Settings). LocalMetric tells every screen
             // whether to show kg/cm/ml or lb/ft/fl oz (see data/Units.kt).
             settings?.let { s -> GymNamTheme(paletteId = s.paletteId, themeMode = s.themeMode) {
-              CompositionLocalProvider(LocalMetric provides s.metric) {
+              // LocalDiet: your allergies/diets from the Me page, so any screen can show ⚠️ warnings.
+              CompositionLocalProvider(
+                  LocalMetric provides s.metric,
+                  LocalDiet provides DietPrefs(s.allergies, s.diets, s.otherAllergies)
+              ) {
                 // "when" is like a list of if/else checks; the first one that is true wins.
                 when {
                     s.lockEnabled && !unlocked -> LockScreen(::authenticate)

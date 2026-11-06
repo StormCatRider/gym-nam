@@ -34,9 +34,16 @@ android {
 
     buildTypes {
         release {
+            // "release" = the FAST version: code is optimized and shrunk (R8), and screens
+            // scroll much more smoothly than the "debug" version Android Studio installs
+            // while developing. In Android Studio: Build > Select Build Variant > release.
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Signed with your computer's debug key so you can install it on your own phone
+            // (over the debug version, keeping your data). To publish on Google Play you'd
+            // create a real upload key instead (Build > Generate Signed App Bundle).
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -63,6 +70,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("androidx.core:core-ktx:1.15.0")
+    // Installs the "baseline profiles" that Compose and other libraries ship, so the
+    // release app is pre-compiled for speed on first launch (smoother scrolling from day one).
+    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

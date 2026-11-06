@@ -2,13 +2,15 @@
 // PLAIN-ENGLISH GUIDE
 //
 // WHAT THIS FILE IS: what you SEE on the Today tab, from top to bottom:
-//  1. Day header: app name, 🔥 streak, the date, and < > arrows to change day.
+//  1. Day header: the date, a 📅 calendar button and < > arrows to change day.
+//     (The app name, your photo and the 🔥 streak are in the colored top bar.)
 //  2. "Update your goals?" banner (only when your weight trend moved 5+ lb).
 //  3. The big calorie ring + protein / carbs / fat bars.
 //  4. Water card.
 //  5. One card per meal (Breakfast, Lunch, Dinner, Snack) with its foods.
 //  6. Exercise card.
-// Plus two pop-up dialogs: "Save this meal" and "Delete this food?".
+//  7. "How do you feel?" mood log (MoodUi.kt).
+// Plus pop-ups: "Save this meal", and a food's long-press menu ("It made me sick" / Delete).
 // The numbers come from TodayViewModel (the brain); this file only draws them.
 //
 // READING SCREEN CODE: each function marked @Composable draws a piece of the
@@ -77,6 +79,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.Mood
+import com.gymnam.app.data.rememberFlags
+import com.gymnam.app.ui.common.FlagChips
+import androidx.compose.material.icons.filled.CalendarMonth
 import com.gymnam.app.data.FoodEntry
 import com.gymnam.app.data.Meal
 import com.gymnam.app.ui.common.EmojiBadge
@@ -103,11 +109,16 @@ fun TodayScreen(
     contentPadding: PaddingValues,
     onAddToMeal: (Meal) -> Unit,
     onEdit: (FoodEntry) -> Unit,
-    onAddExercise: () -> Unit
+    onAddExercise: () -> Unit,
+    onOpenCalendar: () -> Unit
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
-    val streak by vm.streak.collectAsStateWithLifecycle()
     val suggestion by vm.suggestion.collectAsStateWithLifecycle()
+    val moods by vm.moods.collectAsStateWithLifecycle()
+    val moodChoices by vm.suspectChoices.collectAsStateWithLifecycle()
+    // moodSheet = which face was tapped (null = sheet closed); moodFood = food pre-ticked in it.
+    var moodSheet by remember { mutableStateOf<Mood?>(null) }
+    var moodFood by remember { mutableStateOf<String?>(null) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.onResume() }
     val haptics = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
@@ -130,7 +141,7 @@ fun TodayScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item {
-            DayHeader(state.day, streak.current, vm::previousDay, vm::nextDay, vm::goToToday)
+            DayHeader(state.day, vm::previousDay, vm::nextDay, vm::goToToday, onOpenCalendar)
         }
         // The goal-update banner. Shows e.g. "Your 7-day trend is 174.6 lb (was 180 lb).
         // New goal 2,170 kcal instead of 2,240." with "Not now" / "Update goals".
@@ -209,6 +220,21 @@ fun TodayScreen(
                 }
             })
         }
+        // "How do you feel?" mood log.
+        item {
+            MoodCard(moods, onPick = { moodFood = null; moodSheet = it }, onLongPress = { m ->
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                vm.deleteMood(m)
+                scope.launch {
+                    if (snackbar.showSnackbar(deletedMsg, undoLabel, duration = SnackbarDuration.Short) ==
+                        SnackbarResult.ActionPerformed) vm.restoreMood(m)
+                }
+            })
+        }
+    }
+
+    moodSheet?.let { m ->
+        MoodSheet(m, moodFood, moodChoices, onSave = vm::addMood, onDismiss = { moodSheet = null; moodFood = null })
     }
 
     // Dialog: name and save this meal's foods as a "My meal".
@@ -240,7 +266,13 @@ fun TodayScreen(
     toDelete?.let { entry ->
         AlertDialog(
             onDismissRequest = { toDelete = null },
-            title = { Text(stringResource(R.string.delete_confirm, entry.name)) },
+            title = { Text(entry.name) },
+            // Two choices for a food: log that it made you feel bad, or delete it.
+            text = {
+                TextButton(onClick = { moodFood = entry.name; moodSheet = Mood.SICK; toDelete = null }) {
+                    Text("🤢  " + stringResource(R.string.made_me_sick))
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
                     vm.delete(entry)
@@ -259,36 +291,25 @@ fun TodayScreen(
 // Shows "Today", "Yesterday", or a date like "Nov 3, 2026" (in your phone's
 // format). Tapping the date jumps back to today. The > arrow is disabled on today.
 @Composable
-private fun DayHeader(day: LocalDate, streak: Int, onPrev: () -> Unit, onNext: () -> Unit, onToday: () -> Unit) {
+private fun DayHeader(day: LocalDate, onPrev: () -> Unit, onNext: () -> Unit, onToday: () -> Unit, onCalendar: () -> Unit) {
     val today = LocalDate.now()
     val label = when (day) {
         today -> stringResource(R.string.today)
         today.minusDays(1) -> stringResource(R.string.yesterday)
         else -> day.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
     }
+    // The app name and streak moved to the colored top bar; this row is just the date,
+    // a calendar button (see what you ate on any day) and the < > day arrows.
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                if (streak > 0) {
-                    Spacer(Modifier.width(8.dp))
-                    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
-                        Text("🔥 " + pluralStringResource(R.plurals.streak_days, streak, streak),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
-                    }
-                }
-            }
-            Text(
-                label,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(onClick = onToday)
-            )
+        Text(
+            label,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.weight(1f).clip(MaterialTheme.shapes.small).clickable(onClick = onToday)
+        )
+        FilledTonalIconButton(onClick = onCalendar) {
+            Icon(Icons.Filled.CalendarMonth, stringResource(R.string.calendar_title))
         }
+        Spacer(Modifier.width(8.dp))
         FilledTonalIconButton(onClick = onPrev) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, stringResource(R.string.prev_day))
         }
@@ -384,6 +405,8 @@ private fun EntryRow(e: FoodEntry, onClick: () -> Unit, onLongClick: () -> Unit)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(e.name, style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            // ⚠️ tags if the name matches one of your allergies/diets (Me page).
+            FlagChips(rememberFlags(e.name), Modifier.padding(vertical = 2.dp))
             Text(
                 formatAmount(e.amount, e.unit),
                 style = MaterialTheme.typography.bodySmall,

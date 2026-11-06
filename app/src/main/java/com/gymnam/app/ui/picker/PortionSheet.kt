@@ -55,6 +55,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gymnam.app.R
+import com.gymnam.app.data.rememberItemFlags
+import com.gymnam.app.ui.common.WarningBanner
 import com.gymnam.app.data.FoodItem
 import com.gymnam.app.data.FoodSource
 import com.gymnam.app.data.Meal
@@ -116,6 +118,9 @@ fun PortionSheet(
                     )
                 }
             }
+
+            // Allergy/diet warning + "check the label" reminder (only if something matches).
+            WarningBanner(rememberItemFlags(item), Modifier.padding(top = 12.dp))
 
             // Big live calorie number + macros
             Text(

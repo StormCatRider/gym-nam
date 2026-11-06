@@ -73,6 +73,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.rememberFlags
+import com.gymnam.app.data.rememberRecipeFlags
+import com.gymnam.app.ui.common.FlagChips
+import com.gymnam.app.ui.common.WarningBanner
 import com.gymnam.app.data.FridgeUnit
 import com.gymnam.app.data.Meal
 import com.gymnam.app.data.RecipeModel
@@ -202,6 +206,9 @@ private fun RecipeBody(r: RecipeModel, fridge: FridgeView) {
     }
 
     // Nutrition per serving
+    // Allergy/diet warning for the whole recipe + "check the label" reminder.
+    WarningBanner(rememberRecipeFlags(r))
+
     SoftCard {
         Text(stringResource(R.string.per_serving), style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -240,6 +247,7 @@ private fun RecipeBody(r: RecipeModel, fridge: FridgeView) {
                 Text(ing.emoji, modifier = Modifier.width(28.dp))
                 Column(Modifier.weight(1f)) {
                     Text(ing.name, style = MaterialTheme.typography.bodyLarge)
+                    FlagChips(rememberFlags(ing.name))
                     match?.let {
                         Text(stringResource(R.string.in_fridge, it.name, formatQty(it.quantity, it.unit)),
                             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)

@@ -70,6 +70,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.rememberRecipeFlags
+import com.gymnam.app.ui.common.FlagChips
 import com.gymnam.app.data.FridgeItem
 import com.gymnam.app.data.RecipeSource
 import com.gymnam.app.ui.common.EmojiBadge
@@ -118,8 +120,7 @@ fun FridgeTab(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
-            Text(stringResource(R.string.tab_fridge), style = MaterialTheme.typography.headlineMedium)
-            Spacer(Modifier.size(10.dp))
+            // (The page title "Fridge" now lives in the colored top bar.)
             // The two-part switch: Fridge items | Recipes.
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                 FridgeSection.entries.forEachIndexed { i, s ->
@@ -327,6 +328,7 @@ private fun RecipeRowCard(row: RecipeRow, kcalLeft: Int, onClick: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(r.name, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                FlagChips(rememberRecipeFlags(r), Modifier.padding(vertical = 2.dp))   // ⚠️ allergy/diet tags
                 Text(
                     buildList {
                         add(stringResource(R.string.kcal_value, r.kcal.roundToInt()))

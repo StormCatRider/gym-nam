@@ -80,6 +80,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gymnam.app.R
+import com.gymnam.app.data.rememberItemFlags
+import com.gymnam.app.ui.common.FlagChips
 import com.gymnam.app.data.FoodItem
 import com.gymnam.app.data.FoodSource
 import com.gymnam.app.data.SavedMeal
@@ -377,6 +379,7 @@ private fun FoodRow(item: FoodItem, onClick: (FoodItem) -> Unit, onLong: (FoodIt
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(item.name, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                FlagChips(rememberItemFlags(item), Modifier.padding(vertical = 2.dp))   // ⚠️ allergy/diet tags
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     when (item.source) {
                         FoodSource.SAVED -> Badge(stringResource(R.string.badge_mine))

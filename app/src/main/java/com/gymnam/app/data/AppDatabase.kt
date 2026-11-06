@@ -10,8 +10,9 @@
 //  saved_meals    "My meals"                 fridge_items  the Fridge tab
 //  recipes        your own recipes           weight_entries, water_entries,
 //  exercise_entries  the tracking cards on Today
+//  mood_entries   the mood log ("How do you feel?", added in app 1.1 = database v5)
 //
-// VERSIONS AND MIGRATIONS: each time the app gained new tables (stages 2, 3 and 4)
+// VERSIONS AND MIGRATIONS: each time the app gained new tables (stages 2, 3, 4 and v1.1)
 // the database "version" went up. A "migration" is the step that adds the new
 // tables WITHOUT erasing what you already logged. If you ever add a table, you
 // must raise "version" and write a new migration, or the app will crash on
@@ -39,13 +40,13 @@ class Converters {
     @TypeConverter fun stringToFridgeUnit(s: String): FridgeUnit = FridgeUnit.valueOf(s)
 }
 
-// The list of tables and the current version number (4).
+// The list of tables and the current version number (5).
 @Database(
     entities = [
         FoodEntry::class, SavedFood::class, SavedMeal::class, FridgeItem::class, Recipe::class,
-        WeightEntry::class, WaterEntry::class, ExerciseEntry::class
+        WeightEntry::class, WaterEntry::class, ExerciseEntry::class, MoodEntry::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 // Each "fun xxxDao()" hands out one menu of database actions (see the Dao files).
@@ -56,6 +57,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun fridgeDao(): FridgeDao
     abstract fun recipeDao(): RecipeDao
     abstract fun trackingDao(): TrackingDao
+    abstract fun moodDao(): MoodDao
 
     companion object {
         // CREATE TABLE IF NOT EXISTS = make the table only if it isn't there yet.
@@ -123,9 +125,21 @@ abstract class AppDatabase : RoomDatabase() {
 
         // Opens (or creates) gymnam.db and registers every migration so older
         // installs upgrade step by step: 1 -> 2 -> 3 -> 4.
+        /** v4 -> v5 (app 1.1): adds the mood log. Nothing else changes; your data is kept. */
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `mood_entries` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`epochDay` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `mood` INTEGER NOT NULL, " +
+                        "`symptoms` TEXT NOT NULL, `foods` TEXT NOT NULL, `note` TEXT NOT NULL)"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_mood_entries_epochDay` ON `mood_entries` (`epochDay`)")
+            }
+        }
+
         fun create(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "gymnam.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
     }
 }
