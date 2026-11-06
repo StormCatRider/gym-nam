@@ -331,7 +331,7 @@ private fun ResultStep(p: Profile?, r: GoalResult?, metric: Boolean) {
             color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 6.dp))
         MathLine(if (metric) stringResource(R.string.calc_protein_metric, fmtNum(Units.proteinPerUnit(p.proteinPerLb, true)), kg, r.targets.proteinG)
                  else stringResource(R.string.calc_protein, fmtNum(p.proteinPerLb), fmtNum(p.weightLb), r.targets.proteinG))
-        MathLine(stringResource(R.string.calc_fat, r.targets.fatG))
+        MathLine(stringResource(if (metric) R.string.calc_fat_metric else R.string.calc_fat, r.targets.fatG))
         MathLine(stringResource(R.string.calc_carbs, r.targets.carbsG))
     }
     Text(stringResource(R.string.setup_disclaimer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

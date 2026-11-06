@@ -1,4 +1,4 @@
-# Gym & Ñam v1.0.1
+# Gym & Ñam v1.1.0
 
 Calorie counter for Android 10+ (Kotlin, Jetpack Compose, Room, Material 3).
 
@@ -11,6 +11,16 @@ PLAIN-ENGLISH GUIDE box and has `//` notes explaining each part.
    - If Studio says the wrapper is missing, go to *Settings → Build Tools → Gradle* and set
      "Distribution" to **Wrapper** (it reads `gradle/wrapper/gradle-wrapper.properties`).
 3. Turn on USB debugging on your Pixel, plug it in and press ▶ Run.
+
+## New in v1.1
+- **Units:** Imperial (lb, ft/in, fl oz) or Metric (kg, cm, ml / L), chosen in setup and switchable in Settings. Data is always stored in imperial, so switching never changes your data.
+- **Look:** Light / Dark / Follow phone in Settings. A colored top bar in your palette color with the app logo or your photo. Readable setup text in night mode.
+- **Me page** (tap the logo or photo): profile photo (Android Photo Picker, saved privately), name, body basics, allergies (the 9 major allergens + your own words) and diets (vegetarian, vegan, no pork, lactose-free).
+- **⚠️ Warnings** on foods, search results, the amount sheet and recipes, always with "check the label". Scanned products also use Open Food Facts' label allergens.
+- **"How do you feel?"** mood log with symptoms and the foods you suspect, plus "It made me feel sick" from any food. The Me page shows foods that keep coming up ("possible triggers").
+- **Calendar** (📅 on Today): month view with a dot per day (within goal / over goal) and each day's foods, totals, water, exercise and moods.
+- **Smoother:** release build with R8 + baseline profiles. In Android Studio choose Build → Select Build Variant → **release**. GitHub also builds `app-release.apk` on every push (Actions → latest run → Artifacts).
+- The backup zip now includes `mood.csv`. Database v5 (it migrates automatically and keeps your data).
 
 ## New in stage 5 (v1.0): setup, goals, lock, Health Connect, reminders
 - **First-launch setup:** a 3-screen tour, then theme, then about you (sex, age, height in **ft/in**, weight in **lb**),

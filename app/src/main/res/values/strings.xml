@@ -473,4 +473,5 @@
     <string name="mood_note">Note (optional)</string>
     <string name="mood_doctor_note">If you have trouble breathing, swelling of the face or throat, or feel very sick, get medical help right away.</string>
     <string name="made_me_sick">It made me feel sick</string>
+    <string name="calc_fat_metric">Fat = 25%% of calories ÷ 9 (at least 0.66 g/kg) = %1$d g</string>
 </resources>

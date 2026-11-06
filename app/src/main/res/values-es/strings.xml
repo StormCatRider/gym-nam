@@ -461,4 +461,5 @@
     <string name="mood_note">Nota (opcional)</string>
     <string name="mood_doctor_note">Si te cuesta respirar, se te hinchan la cara o la garganta, o te sientes muy mal, busca atención médica de inmediato.</string>
     <string name="made_me_sick">Me hizo sentir mal</string>
+    <string name="calc_fat_metric">Grasa = 25%% de las calorías ÷ 9 (mínimo 0.66 g/kg) = %1$d g</string>
 </resources>

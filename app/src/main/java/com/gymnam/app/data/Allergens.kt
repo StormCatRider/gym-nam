@@ -19,6 +19,9 @@
 // soy, sesame. Mollusks (clams, squid...) are included with shellfish because many
 // people with shellfish allergy avoid both.
 //
+// SCANNED / ONLINE PRODUCTS: Open Food Facts also lists the allergens printed on the
+// product's label ("allergens_tags"); checkItem() uses those too.
+//
 // TO ADD A KEYWORD: add it (lowercase, no accents) to the right list below.
 // ==============================================================================
 package com.gymnam.app.data
@@ -60,7 +63,8 @@ object Allergens {
         "ghee", "kefir", "curd", "latte", "cappuccino", "mozzarella", "parmesan", "cheddar", "ricotta", "feta", "brie",
         "paneer", "custard", "ice cream", "milkshake", "alfredo", "pizza", "quesadilla", "lasagna", "mac and cheese",
         "queso", "leche", "lacteo", "mantequilla", "crema", "yogur", "requeson", "jocoque", "nata", "dulce de leche",
-        "cajeta", "flan", "helado", "licuado", "atole")
+        "cajeta", "flan", "helado", "licuado", "atole",
+        "caesar", "cesar")
     private val MILK_X = listOf("peanut butter", "almond butter", "nut butter", "apple butter", "cocoa butter",
         "mantequilla de mani", "mantequilla de cacahuate", "crema de cacahuate", "almond milk", "oat milk", "soy milk",
         "coconut milk", "coconut cream", "rice milk", "cashew milk", "leche de almendra", "leche de avena",
@@ -76,17 +80,19 @@ object Allergens {
         "pancake", "hotcake", "donut", "doughnut", "dona", "brownie", "pretzel", "pita", "naan", "seitan", "bulgur",
         "semolina", "farro", "spelt", "beer", "cerveza", "soy sauce", "salsa de soya", "pizza", "burrito",
         "sandwich", "torta", "bolillo", "telera", "concha", "pan dulce", "empanada", "lasagna", "ravioli",
-        "tortellini", "dumpling", "gyoza", "ramen", "udon", "bran flakes", "raisin bran", "cupcake", "cheesecake")
+        "tortellini", "dumpling", "gyoza", "ramen", "udon", "bran flakes", "raisin bran", "cupcake", "cheesecake",
+        "crouton", "cruton", "caesar salad", "ensalada cesar", "wrap")
     private val WHEAT_X = listOf("gluten free", "sin gluten", "corn flour", "harina de maiz", "rice flour",
         "harina de arroz", "almond flour", "harina de almendra", "rice noodles", "fideos de arroz", "corn tortilla",
         "tortilla de maiz", "rice cake", "pan fried", "pan seared", "masa harina", "pancake syrup",
-        "miel para hot cakes", "pasta de tomate", "tomato paste", "root beer", "spaghetti squash")
+        "miel para hot cakes", "pasta de tomate", "tomato paste", "root beer", "spaghetti squash",
+        "oat protein pancakes", "hot cakes de avena", "lettuce wrap", "wrap de lechuga")
     private val SHELLFISH = listOf("shrimp", "prawn", "crab", "lobster", "crawfish", "crayfish", "scallop", "clam",
         "mussel", "oyster", "squid", "calamari", "octopus", "camaron", "gamba", "langosta", "langostino", "cangrejo",
         "jaiba", "almeja", "mejillon", "ostion", "ostra", "callo de hacha", "pulpo", "calamar")
     private val FISH = listOf("fish", "salmon", "tuna", "cod", "tilapia", "trout", "sardine", "anchovy", "halibut",
         "mackerel", "catfish", "haddock", "pollock", "mahi", "swordfish", "snapper", "sea bass", "fish sauce", "sushi",
-        "surimi", "worcestershire", "caesar dressing", "pescado", "atun", "bacalao", "trucha", "sardina", "anchoa",
+        "surimi", "worcestershire", "caesar", "cesar", "pescado", "atun", "bacalao", "trucha", "sardina", "anchoa",
         "mojarra", "huachinango", "robalo", "pez espada", "sierra")
     // "Tuna (fruta)" = prickly pear in Spanish, not the fish.
     private val FISH_X = listOf("tuna fruta", "tunas fruta", "prickly pear", "sushi rice", "arroz para sushi",

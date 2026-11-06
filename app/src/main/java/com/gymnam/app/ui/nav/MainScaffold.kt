@@ -42,7 +42,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Kitchen
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.ShowChart
+import androidx.compose.material.icons.automirrored.outlined.ShowChart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -147,7 +147,7 @@ private data class Tab(val route: String, val labelRes: Int, val icon: ImageVect
 private val tabs = listOf(
     Tab(Routes.TODAY, R.string.tab_today, Icons.Outlined.Home),
     Tab(Routes.FRIDGE, R.string.tab_fridge, Icons.Outlined.Kitchen),
-    Tab(Routes.PROGRESS, R.string.tab_progress, Icons.Outlined.ShowChart),
+    Tab(Routes.PROGRESS, R.string.tab_progress, Icons.AutoMirrored.Outlined.ShowChart),
     Tab(Routes.SETTINGS, R.string.tab_settings, Icons.Outlined.Settings),
 )
 

@@ -58,6 +58,10 @@ Data flows back up the stack by itself. When something changes in the database, 
 | `Recipe.kt`, `BuiltInRecipes.kt` | Recipes (yours plus built-in) |
 | `FridgeMatch.kt` | "You have 4 of 6", and what cooking subtracts |
 | `Profile.kt` | **Your body profile and ALL the calorie and macro formulas** |
+| `Units.kt` | Imperial ↔ metric (lb/kg, ft-in/cm, fl oz/ml/L). Data is always saved in imperial; metric is only for display and typing |
+| `Allergens.kt` | Allergy and diet keyword lists (EN/ES) behind the ⚠️ warnings |
+| `Mood.kt` | Mood log ("How do you feel?") and the "possible triggers" counter |
+| `ProfilePhoto.kt` | Saves your profile photo privately (512 px square) |
 | `SettingsStore.kt` | Every setting and its default |
 | `AppDatabase.kt` | The database file, its tables and upgrades (migrations) |
 | `OpenFoodFacts.kt`, `MealDb.kt` | The two optional internet services (blocked when internet is OFF) |
@@ -66,6 +70,11 @@ Data flows back up the stack by itself. When something changes in the database, 
 | `HealthSync.kt` | Optional Health Connect link |
 | **ui/** | **Everything you see**, one folder per area |
 | `nav/MainScaffold.kt` | Bottom bar, + sheet, and the map of all screens |
+| `nav/AppTopBar.kt` | The colored top bar (photo or logo, name, streak) and the header for inner pages |
+| `me/` | The Me page: photo, name, body basics, allergies and diet, possible triggers |
+| `calendar/` | The Calendar: month grid and what you ate on any day |
+| `today/MoodUi.kt` | The "How do you feel?" card and check-in sheet |
+| `common/Avatar.kt`, `common/Warnings.kt` | Round photo/logo, ⚠️ warning chips and banner |
 | `today/` | Today tab: screen, brain, calorie ring, water and exercise cards |
 | `picker/` | Food search, plus the amount sheet |
 | `add/` | Type-a-food form |
@@ -135,6 +144,9 @@ Other places:
 | Add or change a color palette | `ui/theme/Theme.kt` → `Palettes` (and add its name to both strings.xml) |
 | Change default settings (water goal, reminder hour…) | `data/SettingsStore.kt` → `AppSettings` |
 | Change the meal guessed by the clock | `ui/common/Common.kt` → `mealForNow` |
+| Add an allergy keyword (e.g. a new cheese) | `data/Allergens.kt` → the matching list (lowercase, no accents) |
+| Change the water quick buttons (fl oz or ml) | `data/Units.kt` → `waterPresets` |
+| Add a mood symptom | `data/Mood.kt` → `Symptom`, plus its name in both strings.xml and `ui/today/MoodUi.kt` → `symptomLabel` |
 | Change "expiring soon" (3 days) | `data/FridgeMatch.kt` → `SOON_DAYS`, and `ui/fridge/FridgeTab.kt` → `expiryGroup` / `ExpiryChip` |
 | Change the app icon | `res/drawable/ic_launcher_fg.xml` (drawing), `res/values/colors.xml` (colors) |
 | Release a new version | `app/build.gradle.kts`: raise `versionCode` by 1 and update `versionName` |
@@ -156,6 +168,8 @@ Other places:
 | Streaks | `ui/today/TodayViewModel.kt` | `streaks` |
 | Kitchen measures → grams (cups, tbsp, lb, oz…) | `data/MealDb.kt` | `measureToGrams` |
 | Fridge units → grams (1 lb = 453.6 g, 1 oz = 28.35 g) | `data/Fridge.kt` | `FridgeUnit` |
+| Units: kg = lb ÷ 2.20462, cm = in × 2.54, ml = fl oz × 29.5735 | `data/Units.kt` | `Units` |
+| Possible triggers: foods named in 2+ "felt bad" check-ins | `data/Mood.kt` | `suspectCounts` |
 
 ---
 
@@ -165,4 +179,6 @@ Other places:
 2. Choose **File → Open** and pick the `GymNam` folder.
 3. Wait for the first "Gradle sync". It downloads the libraries, which takes a few minutes.
 4. Plug in your phone with USB debugging on, or create an emulator. Then press **▶ Run**.
+   For the smooth, fast version, first choose **Build → Select Build Variant → release**.
+   The default "debug" version is always slower; it's made for developing, not daily use.
 5. If something fails to build, copy the red error text from the **Build** panel. It names the file and line.

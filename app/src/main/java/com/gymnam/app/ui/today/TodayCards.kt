@@ -53,7 +53,7 @@ import kotlin.math.roundToInt
 private val WaterBlue = Color(0xFF8EC5EC)
 
 // frac = water drunk / goal (0 to 1) -> how full the blue bar is, animated.
-/** Water: one tap adds a glass. Glasses are 8 fl oz each, so a 64 fl oz goal = 8 glasses. */
+/** Water: glasses are 8 fl oz (or 250 ml in metric), so a 64 fl oz goal = 8 glasses. */
 @Composable
 fun WaterCard(flOz: Double, goal: Int, onAdd: (Double) -> Unit, onUndo: () -> Unit) {
     val metric = LocalMetric.current
