@@ -53,6 +53,9 @@ android {
     kotlinOptions { jvmTarget = "17" }
     // buildConfig = true lets the app read its own version name (shown at the bottom of Settings).
     buildFeatures { compose = true; buildConfig = true }
+    // Skip the extra "lint" check that release builds run by default. It has to download its
+    // own tool the first time (which fails if the internet drops) and it doesn't change the app.
+    lint { checkReleaseBuilds = false }
 }
 
 ksp {
