@@ -69,7 +69,7 @@ data class AppSettings(
     val metric: Boolean = false,
     /** "system" = follow the phone, "light", or "dark". */
     val themeMode: String = "system",
-    /** Name or nickname for "Hi, Hugo" (empty = not set). */
+    /** Name or nickname for the "Hi, <name>" greeting (empty = not set). */
     val userName: String = "",
     /** Allergy ids you picked on the Me page ("peanut", "milk"...); see data/Allergens.kt. */
     val allergies: Set<String> = emptySet(),
